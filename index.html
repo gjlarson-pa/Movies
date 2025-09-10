@@ -113,7 +113,6 @@ label {
 <div id="result"></div>
 <button id="pickButton" onclick="pickMovie()">Surprise Me!</button>
 
-<!-- Type and Genre checkboxes -->
 <div class="checkbox-grid">
   <label><input type="checkbox" id="movie" checked> <div style="color: #f9d342;"><b>Movies</b></div></label>
   <label><input type="checkbox" id="serial" checked> <div style="color: #f9d342;"><b>Serials</b></div></label>
@@ -150,24 +149,18 @@ label {
 <script>
 // Type checkboxes: at least one must be checked
 const typeCheckboxes = [document.getElementById('movie'), document.getElementById('serial'), document.getElementById('tvshow')];
-typeCheckboxes.forEach(cb => {
-  cb.addEventListener('change', () => {
-    if (!typeCheckboxes.some(c => c.checked)) cb.checked = true;
-  });
-});
+typeCheckboxes.forEach(cb => cb.addEventListener('change', () => {
+  if (!typeCheckboxes.some(c => c.checked)) cb.checked = true;
+}));
 
 // Genre checkboxes logic
 const topCheckbox = document.getElementById('top');
 const genreCheckboxes = Array.from(document.querySelectorAll('.checkbox-grid input[type="checkbox"]')).filter(cb => !typeCheckboxes.includes(cb));
-
 topCheckbox.addEventListener('change', () => {
   if (topCheckbox.checked) genreCheckboxes.forEach(cb => { if (cb !== topCheckbox) cb.checked = false; });
 });
-
 genreCheckboxes.forEach(cb => {
-  if (cb !== topCheckbox) {
-    cb.addEventListener('change', () => { if (cb.checked) topCheckbox.checked = false; });
-  }
+  if (cb !== topCheckbox) cb.addEventListener('change', () => { if (cb.checked) topCheckbox.checked = false; });
 });
 
 // Dual-thumb slider
@@ -179,7 +172,7 @@ const yearValue = document.getElementById('yearValue');
 
 const sliderMin = 1920;
 const sliderMax = 2030;
-let currentMin = 1920;
+let currentMin = 1925;
 let currentMax = 2025;
 
 function updateSliderUI() {
@@ -194,8 +187,13 @@ function updateSliderUI() {
 
 function dragThumb(thumb, isMin) {
   let dragging = false;
-  const startDrag = e => { dragging = true; e.preventDefault(); };
-  const stopDrag = e => { dragging = false; document.removeEventListener('mousemove', onDrag); document.removeEventListener('touchmove', onDrag); };
+
+  const startDrag = e => {
+    dragging = true;
+    e.preventDefault();
+  };
+  const stopDrag = () => dragging = false;
+
   const onDrag = e => {
     if (!dragging) return;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -207,20 +205,23 @@ function dragThumb(thumb, isMin) {
     else currentMax = Math.max(value, currentMin);
     updateSliderUI();
   };
+
   thumb.addEventListener('mousedown', startDrag);
   thumb.addEventListener('touchstart', startDrag);
-  document.addEventListener('mouseup', stopDrag);
-  document.addEventListener('touchend', stopDrag);
   document.addEventListener('mousemove', onDrag);
   document.addEventListener('touchmove', onDrag);
+  document.addEventListener('mouseup', stopDrag);
+  document.addEventListener('touchend', stopDrag);
 }
+
 dragThumb(thumbMin, true);
 dragThumb(thumbMax, false);
 updateSliderUI();
 
+// Sample picker (add your movies list here)
 const movies = [
 {name:"¡Three Amigos!", year:1986, genres:["comedy"], type:["movie"]},
-{name:"101 Dalmations", year:1996, genres:["disney","family"], type:["movie"]},
+{name:"101 Dalmatians", year:1996, genres:["disney","family"], type:["movie"]},
 {name:"13th", year:2016, genres:["documentary"], type:["movie"]},
 {name:"21 Jump Street", year:2012, genres:["comedy"], type:["movie"]},
 {name:"A Beautiful Day in the Neighborhood", year:2019, genres:["drama"], type:["movie"]},
@@ -616,37 +617,32 @@ const movies = [
 {name:"The Toys That Made Us", year:2023, genres:["documentary"], type:["tvshow"]},
 {name:"The Twilight Zone", year:1959, genres:["scifi", "halloween"], type:["tvshow"]},
 {name:"Star Wars: The Mandalorian", year:2019, genres:["starwars", "scifi","adventure"], type:["tvshow","serial"]},
-
 ];
 
-function pickMovie(){
-  const activeTypes = typeCheckboxes.filter(cb=>cb.checked).map(cb=>cb.id);
-  const activeGenres = genreCheckboxes.filter(cb=>cb.checked).map(cb=>cb.id);
-  if(topCheckbox.checked) activeGenres.push('top');
-
-  const filtered = movies.filter(movie => {
-    if (!movie.type.some(t => activeTypes.includes(t))) return false;
-    if (!movie.genres.some(g => activeGenres.includes(g))) return false;
-    if (movie.year < currentMin || movie.year > currentMax) return false;
-    return true;
-  });
-
-  if(filtered.length === 0){
-    document.getElementById('result').innerHTML = "No titles match your selection.";
+function pickMovie() {
+  const selectedTypes = typeCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
+  const selectedGenres = genreCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
+  const filtered = movies.filter(m => 
+    m.year >= currentMin &&
+    m.year <= currentMax &&
+    m.type.some(t => selectedTypes.includes(t)) &&
+    (selectedGenres.includes('top') ? m.genres.includes('top') : selectedGenres.length === 0 || m.genres.some(g => selectedGenres.includes(g)))
+  );
+  if (filtered.length === 0) {
+    document.getElementById('result').textContent = "No matching titles found.";
     return;
   }
 
   const choice = filtered[Math.floor(Math.random()*filtered.length)];
-  const googleLink = `https://www.google.com/search?q=${encodeURIComponent(choice.name)} streaming`;
-  document.getElementById('result').innerHTML = `${choice.name} (${choice.year})<br><a href="${googleLink}" target="_blank">🔎 Search on Google</a>`;
+  const resultDiv = document.getElementById('result');
+  const googleSearch = `https://www.google.com/search?q=${encodeURIComponent(choice.name + ' (' + choice.year + ') streaming')}`;
 
-  const btn = document.getElementById('pickButton');
-  btn.textContent = btn.textContent === "Surprise Me!" ? "Pick Again!" : "Surprise Me!";
+  resultDiv.innerHTML = `
+    <em>${choice.name}</em> <small>(${choice.year})</small>
+    <a href="${googleSearch}" target="_blank">🔎 Search on Google</a>
+  `;
 }
 </script>
 
-<br><p style="font-size: 12px; color: #808080;">
-Created by Greg<br>© 2025
-</p>
 </body>
 </html>
