@@ -10,16 +10,16 @@ body {
   color: #fff;
   font-family: Arial, sans-serif;
   text-align: center;
-  padding: 25px;
+  padding: 20px;
 }
 h1 { margin-bottom: 20px; }
 #result {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   color: #f9d342;
   margin-bottom: 30px;
-  height: 175px;
-  line-height: 1.4;
+  height: 125px;
+  line-height: 1.0;
 }
 #result a {
   display: block;
@@ -45,7 +45,7 @@ button {
   margin: 20px auto;
   display: grid;
   grid-template-columns: repeat(3, auto);
-  gap: 12px 30px;
+  gap: 12px 15px;
   justify-content: center;
   font-size: 12px;
 }
@@ -57,9 +57,10 @@ label {
   white-space: nowrap;
 }
 
-/* Custom Dual-Thumb Slider */
+/* Dual-thumb slider */
 .slider-container {
-  width: 320px;
+  width: 90%;
+  max-width: 400px;
   margin: 30px auto;
 }
 .slider-label {
@@ -81,18 +82,28 @@ label {
 .thumb {
   position: absolute;
   top: 50%;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   background: #28a745;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   cursor: pointer;
+  touch-action: none;
 }
 .slider-values {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
   margin-top: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  body { padding: 15px; }
+  #result { font-size: 20px; height: 140px; }
+  button { font-size: 14px; padding: 10px 16px; }
+  .thumb { width: 16px; height: 16px; }
+  .checkbox-grid { font-size: 11px; gap: 10px 8px; }
 }
 </style>
 </head>
@@ -102,14 +113,11 @@ label {
 <div id="result"></div>
 <button id="pickButton" onclick="pickMovie()">Surprise Me!</button>
 
-<!-- Type and Genre checkboxes in grid -->
+<!-- Type and Genre checkboxes -->
 <div class="checkbox-grid">
-  <!-- Types -->
   <label><input type="checkbox" id="movie" checked> <div style="color: #f9d342;"><b>Movies</b></div></label>
   <label><input type="checkbox" id="serial" checked> <div style="color: #f9d342;"><b>Serials</b></div></label>
   <label><input type="checkbox" id="tvshow" checked> <div style="color: #f9d342;"><b>TV Shows</b></div></label>
-
-  <!-- Genres -->
   <label><input type="checkbox" id="starwars" checked> Star Wars</label>
   <label><input type="checkbox" id="disney" checked> Disney</label>
   <label><input type="checkbox" id="action" checked> Action / Adventure</label>
@@ -118,11 +126,11 @@ label {
   <label><input type="checkbox" id="family" checked> Family</label>
   <label><input type="checkbox" id="musical" checked> Musical</label>
   <label><input type="checkbox" id="mystery" checked> Mystery</label>
-  <label><input type="checkbox" id="scifi" checked> Sci-Fi & Fantasy</label>
+  <label><input type="checkbox" id="scifi" checked> Sci-Fi / Fantasy</label>
   <label><input type="checkbox" id="documentary"> Documentary</label>
   <label><input type="checkbox" id="standup"> Stand-up</label>
-  <label><input type="checkbox" id="christmas"> Christmas</label>
   <label><input type="checkbox" id="halloween"> Halloween</label>
+  <label><input type="checkbox" id="christmas"> Christmas</label>
   <label><input type="checkbox" id="top"> Favorites Only</label>
 </div>
 
@@ -140,7 +148,7 @@ label {
 </div>
 
 <script>
-// ----- Type checkboxes: at least one must be checked -----
+// Type checkboxes: at least one must be checked
 const typeCheckboxes = [document.getElementById('movie'), document.getElementById('serial'), document.getElementById('tvshow')];
 typeCheckboxes.forEach(cb => {
   cb.addEventListener('change', () => {
@@ -148,7 +156,7 @@ typeCheckboxes.forEach(cb => {
   });
 });
 
-// ----- Genre checkboxes logic -----
+// Genre checkboxes logic
 const topCheckbox = document.getElementById('top');
 const genreCheckboxes = Array.from(document.querySelectorAll('.checkbox-grid input[type="checkbox"]')).filter(cb => !typeCheckboxes.includes(cb));
 
@@ -162,7 +170,7 @@ genreCheckboxes.forEach(cb => {
   }
 });
 
-// ----- Dual-thumb slider logic -----
+// Dual-thumb slider
 const track = document.getElementById('sliderTrack');
 const range = document.getElementById('sliderRange');
 const thumbMin = document.getElementById('thumbMin');
@@ -186,26 +194,30 @@ function updateSliderUI() {
 
 function dragThumb(thumb, isMin) {
   let dragging = false;
-  thumb.onmousedown = e => {
-    dragging = true;
-    document.onmousemove = e => {
-      if (!dragging) return;
-      const rect = track.getBoundingClientRect();
-      let percent = ((e.clientX - rect.left) / rect.width) * 100;
-      percent = Math.max(0, Math.min(100, percent));
-      const value = Math.round(sliderMin + (percent/100)*(sliderMax-sliderMin));
-      if (isMin) currentMin = Math.min(value, currentMax);
-      else currentMax = Math.max(value, currentMin);
-      updateSliderUI();
-    };
-    document.onmouseup = e => { dragging = false; document.onmousemove = null; document.onmouseup = null; };
+  const startDrag = e => { dragging = true; e.preventDefault(); };
+  const stopDrag = e => { dragging = false; document.removeEventListener('mousemove', onDrag); document.removeEventListener('touchmove', onDrag); };
+  const onDrag = e => {
+    if (!dragging) return;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const rect = track.getBoundingClientRect();
+    let percent = ((clientX - rect.left) / rect.width) * 100;
+    percent = Math.max(0, Math.min(100, percent));
+    const value = Math.round(sliderMin + (percent/100)*(sliderMax-sliderMin));
+    if (isMin) currentMin = Math.min(value, currentMax);
+    else currentMax = Math.max(value, currentMin);
+    updateSliderUI();
   };
+  thumb.addEventListener('mousedown', startDrag);
+  thumb.addEventListener('touchstart', startDrag);
+  document.addEventListener('mouseup', stopDrag);
+  document.addEventListener('touchend', stopDrag);
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('touchmove', onDrag);
 }
 dragThumb(thumbMin, true);
 dragThumb(thumbMax, false);
 updateSliderUI();
 
-// ----- Full movie dataset example -----
 const movies = [
 {name:"¡Three Amigos!", year:1986, genres:["comedy"], type:["movie"]},
 {name:"101 Dalmations", year:1996, genres:["disney","family"], type:["movie"]},
