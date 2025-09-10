@@ -39,8 +39,6 @@ button {
   border-radius: 6px;
   margin-bottom: 20px;
 }
-
-/* Type and Genre checkboxes */
 .checkbox-grid {
   margin: 20px auto;
   display: grid;
@@ -56,17 +54,12 @@ label {
   cursor: pointer;
   white-space: nowrap;
 }
-
-/* Dual-thumb slider */
 .slider-container {
   width: 90%;
   max-width: 400px;
   margin: 30px auto;
 }
-.slider-label {
-  font-size: 14px;
-  margin-bottom: 16px;
-}
+.slider-label { font-size: 14px; margin-bottom: 16px; }
 .slider-track {
   position: relative;
   height: 12px;
@@ -96,8 +89,6 @@ label {
   font-size: 12px;
   margin-top: 10px;
 }
-
-/* Responsive adjustments */
 @media (max-width: 480px) {
   body { padding: 15px; }
   #result { font-size: 20px; height: 140px; }
@@ -146,8 +137,11 @@ label {
   </div>
 </div>
 
+<!-- Include movies.js -->
+<script src="movies.js"></script>
+
 <script>
-// Type checkboxes: at least one must be checked
+// Type checkboxes logic
 const typeCheckboxes = [document.getElementById('movie'), document.getElementById('serial'), document.getElementById('tvshow')];
 typeCheckboxes.forEach(cb => cb.addEventListener('change', () => {
   if (!typeCheckboxes.some(c => c.checked)) cb.checked = true;
@@ -163,13 +157,12 @@ genreCheckboxes.forEach(cb => {
   if (cb !== topCheckbox) cb.addEventListener('change', () => { if (cb.checked) topCheckbox.checked = false; });
 });
 
-// Dual-thumb slider
+// Dual-thumb slider logic
 const track = document.getElementById('sliderTrack');
 const range = document.getElementById('sliderRange');
 const thumbMin = document.getElementById('thumbMin');
 const thumbMax = document.getElementById('thumbMax');
 const yearValue = document.getElementById('yearValue');
-
 const sliderMin = 1920;
 const sliderMax = 2030;
 let currentMin = 1925;
@@ -187,13 +180,8 @@ function updateSliderUI() {
 
 function dragThumb(thumb, isMin) {
   let dragging = false;
-
-  const startDrag = e => {
-    dragging = true;
-    e.preventDefault();
-  };
+  const startDrag = e => { dragging = true; e.preventDefault(); };
   const stopDrag = () => dragging = false;
-
   const onDrag = e => {
     if (!dragging) return;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -205,7 +193,6 @@ function dragThumb(thumb, isMin) {
     else currentMax = Math.max(value, currentMin);
     updateSliderUI();
   };
-
   thumb.addEventListener('mousedown', startDrag);
   thumb.addEventListener('touchstart', startDrag);
   document.addEventListener('mousemove', onDrag);
@@ -218,407 +205,7 @@ dragThumb(thumbMin, true);
 dragThumb(thumbMax, false);
 updateSliderUI();
 
-// Sample picker (add your movies list here)
-const movies = [
-{name:"¡Three Amigos!", year:1986, genres:["comedy"], type:["movie"]},
-{name:"101 Dalmatians", year:1996, genres:["disney","family"], type:["movie"]},
-{name:"13th", year:2016, genres:["documentary"], type:["movie"]},
-{name:"21 Jump Street", year:2012, genres:["comedy"], type:["movie"]},
-{name:"A Beautiful Day in the Neighborhood", year:2019, genres:["drama"], type:["movie"]},
-{name:"A Bug's Life", year:1998, genres:["disney","family"], type:["movie"]},
-{name:"A Charlie Brown Christmas", year:1965, genres:["christmas"], type:["movie"]},
-{name:"A Christmas Story", year:1983, genres:["christmas"], type:["movie"]},
-{name:"A Goofy Movie", year:1995, genres:["top","disney","comedy","family"], type:["movie"]},
-{name:"A League of Their Own", year:1992, genres:["comedy","drama"], type:["movie"]},
-{name:"A Man Called Otto", year:2022, genres:["drama"], type:["movie"]},
-{name:"Addams Family Values", year:1993, genres:["family","comedy","halloween"], type:["movie"]},
-{name:"Air Bud", year:1997, genres:["family"], type:["movie"]},
-{name:"Aladdin", year:1992, genres:["musical","disney","family"], type:["movie"]},
-{name:"Alice in Wonderland", year:1951, genres:["top","disney","family"], type:["movie"]},
-{name:"An American Tail", year:1986, genres:["family"], type:["movie"]},
-{name:"Angels in the Outfield", year:1994, genres:["family"], type:["movie"]},
-{name:"Annie", year:1982, genres:["musical","family"], type:["movie"]},
-{name:"Apollo 13", year:1995, genres:["drama"], type:["movie"]},
-{name:"Arthur", year:1981, genres:["comedy"], type:["movie"]},
-{name:"Aziz Ansari: Buried Alive", year:2013, genres:["standup"], type:["movie"]},
-{name:"Aziz Ansari: Live at Madison Square Garden", year:2015, genres:["standup"], type:["movie"]},
-{name:"Aziz Ansari: Right Now", year:2019, genres:["standup"], type:["movie"]},
-{name:"Babe", year:1995, genres:["family"], type:["movie"]},
-{name:"Back to the Future", year:1985, genres:["scifi"], type:["movie"]},
-{name:"Batman & Robin", year:1997, genres:["scifi","adventure"], type:["movie"]},
-{name:"Battle of the Sexes", year:2017, genres:["drama"], type:["movie"]},
-{name:"Beauty and the Beast", year:1991, genres:["disney","musical","family"], type:["movie"]},
-{name:"Bedknobs and Broomsticks", year:1971, genres:["top","disney","musical","family","halloween"], type:["movie"]},
-{name:"Beetlejuice", year:1988, genres:["comedy","halloween"], type:["movie"]},
-{name:"Bill Burr: Drop Dead Years", year:2025, genres:["standup"], type:["movie"]},
-{name:"Bill Burr: Friends Who Kill", year:2022, genres:["standup"], type:["movie"]},
-{name:"Bill Burr: I'm Sorry You Feel That Way", year:2014, genres:["standup"], type:["movie"]},
-{name:"Bill Burr: Paper Tiger", year:2019, genres:["standup"], type:["movie"]},
-{name:"Bill Burr: Walk Your Way Out", year:2017, genres:["standup"], type:["movie"]},
-{name:"Billy Madison", year:1995, genres:["comedy"], type:["movie"]},
-{name:"BlacKKKlansman", year:2018, genres:["drama","comedy"], type:["movie"]},
-{name:"Bridesmaids", year:2011, genres:["comedy"], type:["movie"]},
-{name:"Bright Lights: Starring Carrie Fisher and Debbie Reynolds", year:2016, genres:["documentary"], type:["movie"]},
-{name:"Caravan of Courage: The Ewok Adventure", year:1984, genres:["starwars","family","scifi"], type:["movie"]},
-{name:"Carrie Fisher: Wishful Drinking", year:2010, genres:["documentary","standup"], type:["movie"]},
-{name:"Casper", year:1995, genres:["halloween"], type:["movie"]},
-{name:"Catch Me If You Can", year:2002, genres:["christmas","drama"], type:["movie"]},
-{name:"Charlie and the Chocolate Factory", year:2005, genres:["family"], type:["movie"]},
-{name:"Chef", year:2014, genres:["comedy","drama"], type:["movie"]},
-{name:"Chicago", year:2002, genres:["musical"], type:["movie"]},
-{name:"Chip ‘n Dale: Rescue Rangers", year:2022, genres:["disney","family"], type:["movie"]},
-{name:"Chitty Chitty Bang Bang", year:1968, genres:["musical","family"], type:["movie"]},
-{name:"Christopher Robin", year:2018, genres:["disney","drama","family"], type:["movie"]},
-{name:"Cinderella", year:1950, genres:["disney","family"], type:["movie"]},
-{name:"Class Action Park", year:2020, genres:["documentary"], type:["movie"]},
-{name:"Clerks", year:1994, genres:["comedy"], type:["movie"]},
-{name:"Clerks II", year:2006, genres:["comedy"], type:["movie"]},
-{name:"Clerks III", year:2022, genres:["comedy"], type:["movie"]},
-{name:"Clue", year:1985, genres:["comedy", "halloween"], type:["movie"]},
-{name:"Coco", year:2017, genres:["disney","family","halloween"], type:["movie"]},
-{name:"Coraline", year:2009, genres:["halloween"], type:["movie"]},
-{name:"Cowboys & Aliens", year:2011, genres:["scifi","adventure"], type:["movie"]},
-{name:"David Holmes: The Boy Who Lived", year:2023, genres:["documentary"], type:["movie"]},
-{name:"Derek DelGaudio's In & of Itself", year:2020, genres:["documentary","standup"], type:["movie"]},
-{name:"Dinner for Schmucks", year:2010, genres:["comedy"], type:["movie"]},
-{name:"Dirty Dancing", year:1987, genres:["top","drama"], type:["movie"]},
-{name:"Dodgeball: A True Underdog Story", year:2004, genres:["comedy"], type:["movie"]},
-{name:"Dogma", year:1999, genres:["comedy"], type:["movie"]},
-{name:"Donald Glover: Weirdo", year:2012, genres:["standup"], type:["movie"]},
-{name:"DuckTales: The Movie – Treasure of the Lost Lamp", year:1990, genres:["disney","family","adventure"], type:["movie"]},
-{name:"Dumb and Dumber", year:1994, genres:["comedy"], type:["movie"]},
-{name:"E.T. the Extra-Terrestrial", year:1982, genres:["top","scifi","family","halloween"], type:["movie"]},
-{name:"Elemental", year:2023, genres:["disney","family"], type:["movie"]},
-{name:"Elf", year:2003, genres:["christmas"], type:["movie"]},
-{name:"Emmet Otter’s Jug-Band Christmas", year:1977, genres:["christmas"], type:["movie"]},
-{name:"Empire of Dreams: The Story of the Star Wars Trilogy", year:2004, genres:["documentary","starwars"], type:["movie"]},
-{name:"Ewoks: The Battle for Endor", year:1985, genres:["starwars","family","scifi"], type:["movie"]},
-{name:"Family Guy Presents: Blue Harvest", year:2007, genres:["comedy"], type:["movie"]},
-{name:"Fanboys", year:2009, genres:["comedy"], type:["movie"]},
-{name:"Fantasia", year:1940, genres:["disney","musical","family"], type:["movie"]},
-{name:"Fantasia 2000", year:2000, genres:["disney","musical","family"], type:["movie"]},
-{name:"Fantastic Mr. Fox", year:2009, genres:["family"], type:["movie"]},
-{name:"Father of the Bride", year:1991, genres:["comedy","drama"], type:["movie"]},
-{name:"FernGully: The Last Rainforest", year:1992, genres:["family"], type:["movie"]},
-{name:"Ferris Bueller’s Day Off", year:1986, genres:["comedy"], type:["movie"]},
-{name:"Finding Nemo", year:2003, genres:["disney","family"], type:["movie"]},
-{name:"Flow", year:2024, genres:["family","drama"], type:["movie"]},
-{name:"Fly Away Home", year:1996, genres:["drama","family"], type:["movie"]},
-{name:"Forgetting Sarah Marshall", year:2008, genres:["comedy"], type:["movie"]},
-{name:"Forrest Gump", year:1994, genres:["drama"], type:["movie"]},
-{name:"Free Willy", year:1993, genres:["family"], type:["movie"]},
-{name:"Frozen", year:2013, genres:["disney","family","musical"], type:["movie"]},
-{name:"Galaxy Quest", year:1999, genres:["comedy","scifi"], type:["movie"]},
-{name:"Gary Gulman: Born on 3rd Base", year:2023, genres:["standup"], type:["movie"]},
-{name:"Gary Gulman: Boyish Man", year:2005, genres:["standup"], type:["movie"]},
-{name:"Gary Gulman: In This Economy?", year:2012, genres:["standup"], type:["movie"]},
-{name:"Gary Gulman: It's About Time", year:2016, genres:["standup"], type:["movie"]},
-{name:"Gary Gulman: The Great Depresh", year:2019, genres:["standup"], type:["movie"]},
-{name:"Get Smart", year:2008, genres:["comedy"], type:["movie"]},
-{name:"Ghostbusters", year:1984, genres:["comedy","halloween","scifi"], type:["movie"]},
-{name:"Ghostbusters II", year:1989, genres:["comedy","halloween","scifi"], type:["movie"]},
-{name:"Glass Onion", year:2019, genres:["drama","mystery"], type:["movie"]},
-{name:"Groundhog Day", year:1993, genres:["comedy"], type:["movie"]},
-{name:"Hamilton", year:2020, genres:["musical"], type:["movie"]},
-{name:"Harry Potter and the Sorcerer’s Stone", year:2001, genres:["scifi","family"], type:["movie"]},
-{name:"Hasan Minhaj: Off With His Head", year:2024, genres:["standup"], type:["movie"]},
-{name:"Hasan Minhaj: The King's Jester", year:2022, genres:["standup"], type:["movie"]},
-{name:"Heavyweights", year:1995, genres:["comedy","family"], type:["movie"]},
-{name:"Hercules", year:1997, genres:["disney","musical","family"], type:["movie"]},
-{name:"Hocus Pocus", year:1993, genres:["halloween"], type:["movie"]},
-{name:"Home Alone", year:1990, genres:["family","christmas","comedy"], type:["movie"]},
-{name:"Home Alone 2: Lost in New York", year:1992, genres:["christmas"], type:["movie"]},
-{name:"Homeward Bound: The Incredible Journey", year:1993, genres:["family","adventure"], type:["movie"]},
-{name:"Honey, I Shrunk the Kids", year:1989, genres:["family","scifi","adventure"], type:["movie"]},
-{name:"Hook", year:1991, genres:["scifi","family","christmas","adventure"], type:["movie"]},
-{name:"Hotel Transylvania", year:2012, genres:["halloween"], type:["movie"]},
-{name:"How the Grinch Stole Christmas", year:2000, genres:["christmas"], type:["movie"]},
-{name:"How the Grinch Stole Christmas!", year:1966, genres:["christmas"], type:["movie"]},
-{name:"How to Train Your Dragon", year:2010, genres:["family"], type:["movie"]},
-{name:"Iliza Shlesinger: A Different Animal", year:2025, genres:["standup"], type:["movie"]},
-{name:"Iliza Shlesinger: Hot Forever", year:2022, genres:["standup"], type:["movie"]},
-{name:"Indiana Jones and the Temple of Doom", year:1984, genres:["scifi","adventure"], type:["movie"]},
-{name:"Indiana Jones and the Last Crusade", year:1989, genres:["scifi","adventure"], type:["movie"]},
-{name:"Indiana Jones and the Kingdom of the Crystal Skull", year:2008, genres:["scifi","adventure"], type:["movie"]},
-{name:"Indiana Jones and the Dial of Destiny", year:2023, genres:["scifi","adventure"], type:["movie"]},
-{name:"Inside Out", year:2015, genres:["disney","family"], type:["movie"]},
-{name:"Inside Out 2", year:2024, genres:["disney","family"], type:["movie"]},
-{name:"It", year:2017, genres:["halloween"], type:["movie"]},
-{name:"It’s a Wonderful Life", year:1946, genres:["christmas","drama"], type:["movie"]},
-{name:"James and the Giant Peach", year:1996, genres:["family","musical"], type:["movie"]},
-{name:"Jay and Silent Bob Reboot", year:2019, genres:["comedy"], type:["movie"]},
-{name:"Jay and Silent Bob Strike Back", year:2001, genres:["comedy"], type:["movie"]},
-{name:"Jim Henson Idea Man", year:2024, genres:["documentary"], type:["movie"]},
-{name:"John Mulaney: Baby J", year:2023, genres:["standup"], type:["movie"]},
-{name:"John Mulaney: Kid Gorgeous at Radio City", year:2018, genres:["standup"], type:["movie"]},
-{name:"John Mulaney: New in Town", year:2012, genres:["standup"], type:["movie"]},
-{name:"John Mulaney: The Comeback Kid", year:2015, genres:["standup"], type:["movie"]},
-{name:"John Oliver: Terrifying Times", year:2008, genres:["standup"], type:["movie"]},
-{name:"Jumanji", year:1995, genres:["family","adventure"], type:["movie"]},
-{name:"Jurassic Park", year:1993, genres:["top","scifi","adventure"], type:["movie"]},
-{name:"Jurassic Park III", year:2001, genres:["scifi","adventure"], type:["movie"]},
-{name:"Klaus", year:2019, genres:["christmas"], type:["movie"]},
-{name:"Knives Out", year:2019, genres:["drama","halloween","mystery"], type:["movie"]},
-{name:"Labyrinth", year:1986, genres:["scifi","musical","halloween"], type:["movie"]},
-{name:"Ladies & Gentlemen... 50 Years of SNL Music", year:2025, genres:["documentary"], type:["movie"]},
-{name:"Lady and the Tramp", year:1955, genres:["disney","family"], type:["movie"]},
-{name:"Liar Liar", year:1997, genres:["comedy"], type:["movie"]},
-{name:"Little Shop of Horrors", year:1986, genres:["musical","comedy", "halloween"], type:["movie"]},
-{name:"Luca", year:2021, genres:["disney","family"], type:["movie"]},
-{name:"Lucky Logan", year:2017, genres:["drama","comedy"], type:["movie"]},
-{name:"MacGruber", year:2010, genres:["comedy"], type:["movie"]},
-{name:"Man of the House", year:1995, genres:["family"], type:["movie"]},
-{name:"Marc Maron: Panicked", year:2025, genres:["standup"], type:["movie"]},
-{name:"Marcel the Shell with Shoes On", year:2021, genres:["drama","family"], type:["movie"]},
-{name:"Mary Poppins", year:1964, genres:["top","disney","musical","family"], type:["movie"]},
-{name:"Matilda", year:1996, genres:["top","family"], type:["movie"]},
-{name:"McMillion$", year:2020, genres:["documentary"], type:["movie"]},
-{name:"Michael Che Matters", year:2016, genres:["standup"], type:["movie"]},
-{name:"Michael Clayton", year:2007, genres:["drama"], type:["movie"]},
-{name:"Mike Birbiglia: My Girlfriend's Boyfriend", year:2013, genres:["standup"], type:["movie"]},
-{name:"Mike Birbiglia: Thank God for Jokes", year:2017, genres:["standup"], type:["movie"]},
-{name:"Mike Birbiglia: The New One", year:2019, genres:["standup"], type:["movie"]},
-{name:"Mike Birbiglia: The Old Man and the Pool", year:2023, genres:["standup"], type:["movie"]},
-{name:"Mike Birbiglia: What I Should Have Said Was Nothing", year:2008, genres:["standup"], type:["movie"]},
-{name:"Moana", year:2016, genres:["disney","musical","family"], type:["movie"]},
-{name:"Monsters, Inc.", year:2001, genres:["disney","family"], type:["movie"]},
-{name:"Mrs. Doubtfire", year:1993, genres:["comedy","family"], type:["movie"]},
-{name:"Mulan", year:1998, genres:["disney","family","musical"], type:["movie"]},
-{name:"Muppets Haunted Mansion", year:2021, genres:["halloween"], type:["movie"]},
-{name:"Music by John Williams", year:2024, genres:["documentary"], type:["movie"]},
-{name:"My Big Fat Greek Wedding", year:2002, genres:["comedy"], type:["movie"]},
-{name:"My Cousin Vinny", year:1992, genres:["top","comedy","drama"], type:["movie"]},
-{name:"My Octopus Teacher", year:2020, genres:["documentary"], type:["movie"]},
-{name:"Nate Bargatze: Full Time Magic", year:2015, genres:["standup"], type:["movie"]},
-{name:"Nate Bargatze: Hello World", year:2023, genres:["standup"], type:["movie"]},
-{name:"Nate Bargatze: The Greatest Average American", year:2021, genres:["standup"], type:["movie"]},
-{name:"Nate Bargatze: The Tennessee Kid", year:2019, genres:["standup"], type:["movie"]},
-{name:"Night at the Museum", year:2006, genres:["family","comedy"], type:["movie"]},
-{name:"Nikki Glaser: Bangin'", year:2019, genres:["standup"], type:["movie"]},
-{name:"Nikki Glaser: Good Clean Filth", year:2022, genres:["standup"], type:["movie"]},
-{name:"Nikki Glaser: Perfect", year:2016, genres:["standup"], type:["movie"]},
-{name:"Nikki Glaser: Someday You'll Die", year:2024, genres:["standup"], type:["movie"]},
-{name:"Noelle", year:2019, genres:["christmas"], type:["movie"]},
-{name:"Not Just a Goof", year:2024, genres:["documentary"], type:["movie"]},
-{name:"Ocean's Eleven", year:2001, genres:["drama"], type:["movie"]},
-{name:"Office Space", year:1999, genres:["comedy"], type:["movie"]},
-{name:"Oliver & Company", year:1988, genres:["disney","musical","family"], type:["movie"]},
-{name:"Paddington", year:2014, genres:["family"], type:["movie"]},
-{name:"Paddington 2", year:2017, genres:["family"], type:["movie"]},
-{name:"ParaNorman", year:2012, genres:["halloween"], type:["movie"]},
-{name:"Patton Oswalt: Annihilation", year:2017, genres:["standup"], type:["movie"]},
-{name:"Patton Oswalt: I Love Everything", year:2020, genres:["standup"], type:["movie"]},
-{name:"Patton Oswalt: Talking for Clapping", year:2016, genres:["standup"], type:["movie"]},
-{name:"Patton Oswalt: We All Scream", year:2022, genres:["standup"], type:["movie"]},
-{name:"Pee-wee’s Big Adventure", year:1985, genres:["comedy","family"], type:["movie"]},
-{name:"Pepsi, Where’s My Jet?", year:2022, genres:["documentary"], type:["movie"]},
-{name:"Pete Holmes: I Am Not for Everyone", year:2023, genres:["standup"], type:["movie"]},
-{name:"Peter Pan", year:1953, genres:["disney","family"], type:["movie"]},
-{name:"Planet of the Apes", year:1968, genres:["scifi","drama"], type:["movie"]},
-{name:"Pocahontas", year:1995, genres:["musical","disney","family"], type:["movie"]},
-{name:"Psycho", year:1960, genres:["drama","halloween"], type:["movie"]},
-{name:"Raiders of the Lost Ark", year:1981, genres:["scifi"], type:["movie"]},
-{name:"Ratatouille", year:2007, genres:["disney","family"], type:["movie"]},
-{name:"Red Tails", year:2012, genres:["drama","adventure"], type:["movie"]},
-{name:"Robin Hood", year:1973, genres:["disney","family"], type:["movie"]},
-{name:"Rogue One: A Star Wars Story", year:2016, genres:["starwars","scifi"], type:["movie"]},
-{name:"Role Models", year:2008, genres:["comedy"], type:["movie"]},
-{name:"Rudolph the Red-Nosed Reindeer", year:1964, genres:["christmas"], type:["movie"]},
-{name:"Saving Mr. Banks", year:2013, genres:["drama","family"], type:["movie"]},
-{name:"Scary Movie", year:2000, genres:["comedy","halloween"], type:["movie"]},
-{name:"Seth Meyers: Dad Man Walking", year:2024, genres:["standup"], type:["movie"]},
-{name:"Seth Meyers: Lobby Baby", year:2019, genres:["standup"], type:["movie"]},
-{name:"Shaun of the Dead", year:2004, genres:["halloween"], type:["movie"]},
-{name:"Shrek", year:2001, genres:["family"], type:["movie"]},
-{name:"Sister Act", year:1992, genres:["comedy","musical"], type:["movie"]},
-{name:"Sleeping Beauty", year:1959, genres:["disney","family"], type:["movie"]},
-{name:"SNL50: The Homecoming Concert", year:2025, genres:["standup"], type:["movie"]},
-{name:"Solo: A Star Wars Story", year:2018, genres:["starwars","scifi","top","adventure"], type:["movie"]},
-{name:"Soul", year:2020, genres:["disney","family"], type:["movie"]},
-{name:"Spaceballs", year:1987, genres:["comedy","scifi"], type:["movie"]},
-{name:"Spielberg", year:2017, genres:["documentary"], type:["movie"]},
-{name:"Star Wars: A New Hope", year:1977, genres:["starwars","scifi","top"], type:["movie"]},
-{name:"Star Wars: Attack of the Clones", year:2002, genres:["starwars","scifi","top"], type:["movie"]},
-{name:"Star Wars: Return of the Jedi", year:1983, genres:["starwars","scifi","top"], type:["movie"]},
-{name:"Star Wars: Revenge of the Sith", year:2005, genres:["starwars","scifi"], type:["movie"]},
-{name:"Star Wars: The Empire Strikes Back", year:1980, genres:["starwars","scifi","top"], type:["movie"]},
-{name:"Star Wars: The Force Awakens", year:2015, genres:["starwars","scifi","top"], type:["movie"]},
-{name:"Star Wars: The Last Jedi", year:2017, genres:["starwars","scifi","top"], type:["movie"]},
-{name:"Star Wars: The Phantom Menace", year:1999, genres:["starwars","scifi","top"], type:["movie"]},
-{name:"Star Wars: The Rise of Skywalker", year:2019, genres:["starwars","scifi"], type:["movie"]},
-{name:"Step Brothers", year:2008, genres:["comedy"], type:["movie"]},
-{name:"Steve Martin and Martin Short: An Evening You Will Forget for the Rest of Your Life", year:2018, genres:["standup"], type:["movie"]},
-{name:"Strays", year:2023, genres:["comedy"], type:["movie"]},
-{name:"Stuart Little", year:1999, genres:["family"], type:["movie"]},
-{name:"Superbad", year:2007, genres:["comedy"], type:["movie"]},
-{name:"Talladega Nights: The Ballad of Ricky Bobby", year:2006, genres:["comedy"], type:["movie"]},
-{name:"Tangled", year:2010, genres:["disney","family","musical"], type:["movie"]},
-{name:"Tarzan", year:1999, genres:["disney","family","musical"], type:["movie"]},
-{name:"Taylor Tomlinson: Have It All", year:2024, genres:["standup"], type:["movie"]},
-{name:"Taylor Tomlinson: Look at You", year:2022, genres:["standup"], type:["movie"]},
-{name:"Taylor Tomlinson: Quarter-Life Crisis", year:2020, genres:["standup"], type:["movie"]},
-{name:"Ted", year:2012, genres:["comedy"], type:["movie"]},
-{name:"The 40 Year-Old Virgin", year:2005, genres:["comedy"], type:["movie"]},
-{name:"The Addams Family", year:1991, genres:["family","comedy","halloween"], type:["movie"]},
-{name:"The Adventures of Tintin", year:2011, genres:["family"], type:["movie"]},
-{name:"The Aristocats", year:1970, genres:["disney","family"], type:["movie"]},
-{name:"The Beginning: Making Episode I", year:2001, genres:["documentary","starwars"], type:["movie"]},
-{name:"The BFG", year:2016, genres:["family"], type:["movie"]},
-{name:"The Big Sick", year:2017, genres:["comedy","drama"], type:["movie"]},
-{name:"The Boys: The Sherman Brothers' Story", year:2009, genres:["documentary"], type:["movie"]},
-{name:"The Breakfast Club", year:1985, genres:["drama","comedy"], type:["movie"]},
-{name:"The Brothers Solomon", year:2007, genres:["comedy"], type:["movie"]},
-{name:"The Chronicles of Narnia: The Lion, the Witch and the Wardrobe", year:2005, genres:["christmas","family","scifi"], type:["movie"]},
-{name:"The Director and the Jedi", year:2018, genres:["documentary","starwars"], type:["movie"]},
-{name:"The Emperor’s New Groove", year:2000, genres:["disney","family"], type:["movie"]},
-{name:"The Goonies", year:1985, genres:["adventure","comedy"], type:["movie"]},
-{name:"The Great Escape", year:1963, genres:["drama"], type:["movie"]},
-{name:"The Great Muppet Caper", year:1980, genres:["family"], type:["movie"]},
-{name:"The Grinch", year:2018, genres:["christmas"], type:["movie"]},
-{name:"The Holdovers", year:2023, genres:["christmas","drama"], type:["movie"]},
-{name:"The Hunchback of Notre Dame", year:1996, genres:["disney","family"], type:["movie"]},
-{name:"The Incredibles", year:2004, genres:["disney","family"], type:["movie"]},
-{name:"The Iron Giant", year:1999, genres:["family"], type:["movie"]},
-{name:"The Jungle Book", year:1967, genres:["disney","family"], type:["movie"]},
-{name:"The Land Before Time", year:1988, genres:["family"], type:["movie"]},
-{name:"The Last Blockbuster", year:2020, genres:["documentary"], type:["movie"]},
-{name:"The Legend of Sleepy Hollow", year:1949, genres:["halloween"], type:["movie"]},
-{name:"The Lion King", year:1994, genres:["disney","musical","family"], type:["movie"]},
-{name:"The Little Mermaid", year:2023, genres:["disney","musical","family"], type:["movie"]},
-{name:"The Lord of the Rings", year:2001, genres:["fantasy","adventure"], type:["movie"]},
-{name:"The Lost World: Jurassic Park", year:1997, genres:["scifi","adventure"], type:["movie"]},
-{name:"The Many Adventures of Winnie the Pooh", year:1977, genres:["disney","family"], type:["movie"]},
-{name:"The Money Pit", year:1986, genres:["comedy","top"], type:["movie"]},
-{name:"The Mummy", year:1999, genres:["adventure","scifi"], type:["movie"]},
-{name:"The Muppet Christmas Carol", year:1992, genres:["christmas"], type:["movie"]},
-{name:"The Muppet Movie", year:1979, genres:["family"], type:["movie"]},
-{name:"The Muppets", year:2011, genres:["family"], type:["movie"]},
-{name:"The NeverEnding Story", year:1984, genres:["scifi","adventure"], type:["movie"]},
-{name:"The Nightmare Before Christmas", year:1993, genres:["christmas","halloween"], type:["movie"]},
-{name:"The Other Guys", year:2010, genres:["comedy"], type:["movie"]},
-{name:"The Parent Trap", year:1998, genres:["disney","family"], type:["movie"]},
-{name:"The Pit and the Pendulum", year:1961, genres:["halloween"], type:["movie"]},
-{name:"The Pixar Story", year:2007, genres:["documentary"], type:["movie"]},
-{name:"The Polar Express", year:2004, genres:["christmas"], type:["movie"]},
-{name:"The Princess and the Frog", year:2009, genres:["disney","family"], type:["movie"]},
-{name:"The Princess Bride", year:1987, genres:["top","family","scifi","comedy","adventure"], type:["movie"]},
-{name:"The Rescuers Down Under", year:1990, genres:["disney","family"], type:["movie"]},
-{name:"The Santa Clause", year:1994, genres:["christmas"], type:["movie"]},
-{name:"The Secret Garden", year:1993, genres:["family","drama"], type:["movie"]},
-{name:"The Shawshank Redemption", year:1994, genres:["drama"], type:["movie"]},
-{name:"The Sound of Music", year:1965, genres:["top","musical","drama","family"], type:["movie"]},
-{name:"The Star Wars Holiday Special", year:1978, genres:["christmas","starwars"], type:["movie"]},
-{name:"The Wild Robot", year:2024, genres:["family"], type:["movie"]},
-{name:"The Wizard of Oz", year:1939, genres:["musical","family"], type:["movie"]},
-{name:"Tig Notaro: Boyish Girl Interrupted", year:2015, genres:["standup"], type:["movie"]},
-{name:"Tig Notaro: Happy to Be Here", year:2018, genres:["standup"], type:["movie"]},
-{name:"Tig Notaro: Hello Again", year:2024, genres:["standup"], type:["movie"]},
-{name:"Timeless Heroes: Indiana Jones & Harrison Ford", year:2023, genres:["documentary"], type:["movie"]},
-{name:"Titanic", year:1997, genres:["top","drama"], type:["movie"]},
-{name:"Tom and Huck", year:1995, genres:["family","adventure"], type:["movie"]},
-{name:"Tommy Boy", year:1995, genres:["comedy"], type:["movie"]},
-{name:"Tomorrowland", year:2015, genres:["scifi","adventure"], type:["movie"]},
-{name:"Top Gun: Maverick", year:2022, genres:["drama","adventure"], type:["movie"]},
-{name:"Toy Story", year:1995, genres:["top","disney","family"], type:["movie"]},
-{name:"Toy Story", year:1995, genres:["disney","family","comedy"], type:["movie"]},
-{name:"Toy Story 2", year:1999, genres:["disney","family"], type:["movie"]},
-{name:"Toy Story 3", year:2010, genres:["disney","family"], type:["movie"]},
-{name:"Toy Story 4", year:2019, genres:["disney","family"], type:["movie"]},
-{name:"Under the Helmet: The Legacy of Boba Fett", year:2021, genres:["documentary","starwars"], type:["movie"]},
-{name:"Up", year:2009, genres:["disney","family","adventure"], type:["movie"]},
-{name:"Waking Sleeping Beauty", year:2009, genres:["documentary"], type:["movie"]},
-{name:"Walk Hard: The Dewey Cox Story", year:2007, genres:["comedy"], type:["movie"]},
-{name:"WALL·E", year:2008, genres:["disney","family","scifi"], type:["movie"]},
-{name:"Wallace & Gromit: A Close Shave", year:1995, genres:["halloween"], type:["movie"]},
-{name:"Wallace & Gromit: The Curse of the Were-Rabbit", year:2005, genres:["halloween"], type:["movie"]},
-{name:"Wallace & Gromit: The Wrong Trousers", year:1993, genres:["halloween"], type:["movie"]},
-{name:"WarGames", year:1983, genres:["drama"], type:["movie"]},
-{name:"Wayne's World", year:1992, genres:["comedy"], type:["movie"]},
-{name:"Weird: The Al Yankovic Story", year:2022, genres:["comedy"], type:["movie"]},
-{name:"West Side Story", year:2021, genres:["musical"], type:["movie"]},
-{name:"Where the Wild Things Are", year:2009, genres:["family"], type:["movie"]},
-{name:"Who Framed Roger Rabbit", year:1988, genres:["disney","family","mystery"], type:["movie"]},
-{name:"Will & Harper", year:2024, genres:["documentary"], type:["movie"]},
-{name:"Willow", year:1988, genres:["scifi","adventure"], type:["movie"]},
-{name:"Willy Wonka and the Chocolate Factory", year:1971, genres:["top","musical","family"], type:["movie"]},
-{name:"Winnie the Pooh", year:2011, genres:["disney","family"], type:["movie"]},
-{name:"Witness", year:1985, genres:["drama","mystery"], type:["movie"]},
-{name:"Wonka", year:2023, genres:["top","musical","family"], type:["movie"]},
-{name:"Won't You Be My Neighbor?", year:2018, genres:["documentary"], type:["movie"]},
-{name:"Wreck-It Ralph", year:2012, genres:["disney","family"], type:["movie"]},
-{name:"Young Frankenstein", year:1975, genres:["comedy","halloween"], type:["movie"]},
-{name:"Young Woman and the Sea", year:2024, genres:["drama"], type:["movie"]},
-{name:"Your Friend, Nate Bargatze", year:2024, genres:["standup"], type:["movie"]},
-{name:"Zathura: A Space Adventure", year:2005, genres:["scifi","family"], type:["movie"]},
-{name:"Zombieland", year:2009, genres:["halloween"], type:["movie"]},
-{name:"Zootopia", year:2016, genres:["disney","family"], type:["movie"]},
-{name:"A Series of Unfortunate Events", year:2017, genres:["family","halloween"], type:["serial"]},
-{name:"Adolescence", year:2025, genres:["drama"], type:["serial"]},
-{name:"Barry", year:2018, genres:["comedy", "drama"], type:["serial","tvshow"]},
-{name:"Better Call Saul", year:2015, genres:["drama"], type:["serial","tvshow"]},
-{name:"Black Mirror", year:2011, genres:["scifi", "drama"], type:["tvshow"]},
-{name:"Bob's Burgers", year:2011, genres:["comedy"], type:["tvshow"]},
-{name:"Breaking Bad", year:2008, genres:["drama"], type:["serial","tvshow"]},
-{name:"Brooklyn Nine-Nine", year:2013, genres:["comedy"], type:["tvshow"]},
-{name:"Cheers", year:1982, genres:["comedy"], type:["tvshow"]},
-{name:"Chernobyl", year:2019, genres:["drama"], type:["serial"]},
-{name:"Community", year:2009, genres:["comedy"], type:["tvshow"]},
-{name:"Disney Gallery: The Mandalorian", year:2023, genres:["documentary","starwars"], type:["tvshow"]},
-{name:"Family Guy", year:1999, genres:["comedy"], type:["tvshow"]},
-{name:"Fleabag", year:2023, genres:["comedy"], type:["serial"]},
-{name:"Freaks and Geeks", year:1999, genres:["comedy", "drama"], type:["tvshow"]},
-{name:"Game of Thrones", year:2011, genres:["drama", "scifi"], type:["serial","tvshow"]},
-{name:"House of the Dragon", year:2022, genres:["drama", "scifi"], type:["serial","tvshow"]},
-{name:"Impeachment: American Crime Story", year:2021, genres:["drama"], type:["serial"]},
-{name:"It's Always Sunny in Philadelphia", year:2005, genres:["comedy"], type:["tvshow"]},
-{name:"King of Queens", year:1998, genres:["comedy"], type:["tvshow"]},
-{name:"King of the Hill", year:1997, genres:["comedy"], type:["tvshow"]},
-{name:"Last Man on Earth", year:2015, genres:["comedy"], type:["tvshow"]},
-{name:"Last Week Tonight with John Oliver", year:2014, genres:["comedy"], type:["tvshow"]},
-{name:"Law & Order", year:1990, genres:["drama","mystery"], type:["tvshow"]},
-{name:"Law & Order: Special Victims Unit", year:1999, genres:["drama","mystery"], type:["tvshow"]},
-{name:"LEGO Star Wars: Rebuild the Galaxy", year:2022, genres:["starwars","family"], type:["serial","tvshow"]},
-{name:"Lessons in Chemistry", year:2023, genres:["drama"], type:["serial"]},
-{name:"Light & Magic", year:2023, genres:["documentary"], type:["tvshow"]},
-{name:"Men in Kilts", year:2023, genres:["documentary"], type:["tvshow"]},
-{name:"Mr. & Mrs Smith", year:2023, genres:["comedy","drama"], type:["tvshow"]},
-{name:"Only Murders in the Building", year:2021, genres:["comedy", "drama","mystery"], type:["tvshow"]},
-{name:"Outlander", year:2014, genres:["drama"], type:["serial","tvshow"]},
-{name:"Outlander: Blood of My Blood", year:2015, genres:["drama"], type:["serial","tvshow"]},
-{name:"Over the Garden Wall", year:2014, genres:["halloween","family"], type:["serial","tvshow"]},
-{name:"Ozark", year:2017, genres:["drama"], type:["serial","tvshow"]},
-{name:"Parks and Recreation", year:2009, genres:["comedy"], type:["tvshow"]},
-{name:"Pokerface", year:2023, genres:["comedy","mystery"], type:["tvshow"]},
-{name:"Russian Doll", year:2019, genres:["drama","mystery"], type:["serial","tvshow"]},
-{name:"Saturday Night Live", year:1975, genres:["comedy"], type:["tvshow"]},
-{name:"Sherlock", year:2010, genres:["drama","mystery"], type:["serial","tvshow"]},
-{name:"Shōgun", year:2023, genres:["drama"], type:["serial","tvshow"]},
-{name:"Somebody Feed Phil", year:2023, genres:["documentary"], type:["tvshow"]},
-{name:"South Park", year:1997, genres:["comedy"], type:["tvshow"]},
-{name:"SpongeBob SquarePants", year:1999, genres:["comedy"], type:["tvshow"]},
-{name:"Star Wars Visions", year:2021, genres:["starwars"], type:["tvshow"]},
-{name:"Star Wars: Andor", year:2022, genres:["starwars", "scifi", "drama"], type:["serial","tvshow"]},
-{name:"Star Wars: Obi-Wan Kenobi", year:2022, genres:["starwars","scifi"], type:["serial"]},
-{name:"Star Wars: Skeleton Crew", year:2023, genres:["starwars","family"], type:["serial"]},
-{name:"Star Wars: The Acolyte", year:2025, genres:["starwars","mystery"], type:["serial"]},
-{name:"Star Wars: The Book of Boba Fett", year:2022, genres:["starwars"], type:["serial"]},
-{name:"Star Wars: The Clone Wars", year:2008, genres:["starwars"], type:["tvshow"]},
-{name:"Stranger Things", year:2016, genres:["drama", "scifi"], type:["serial"]},
-{name:"Succession", year:2018, genres:["drama"], type:["serial","tvshow"]},
-{name:"The Four Seasons", year:2023, genres:["comedy","drama"], type:["serial"]},
-{name:"The Goldbergs", year:2013, genres:["comedy"], type:["tvshow"]},
-{name:"The Good Place", year:2016, genres:["comedy"], type:["tvshow"]},
-{name:"The Last of Us", year:2023, genres:["drama"], type:["serial"]},
-{name:"The Movies That Made Us", year:2023, genres:["documentary"], type:["tvshow"]},
-{name:"The Night Of", year:2016, genres:["drama"], type:["serial"]},
-{name:"The Office", year:2005, genres:["comedy"], type:["tvshow"]},
-{name:"The People vs OJ Simpson: American Crime Story", year:2016, genres:["drama"], type:["serial"]},
-{name:"The Queen's Gambit", year:2020, genres:["drama"], type:["serial"]},
-{name:"The Toys That Made Us", year:2023, genres:["documentary"], type:["tvshow"]},
-{name:"The Twilight Zone", year:1959, genres:["scifi", "halloween"], type:["tvshow"]},
-{name:"Star Wars: The Mandalorian", year:2019, genres:["starwars", "scifi","adventure"], type:["tvshow","serial"]},
-];
-
+// Pick movie function using movies from movies.js
 function pickMovie() {
   const selectedTypes = typeCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
   const selectedGenres = genreCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
