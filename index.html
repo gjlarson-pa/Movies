@@ -157,6 +157,16 @@ genreCheckboxes.forEach(cb => {
   if (cb !== topCheckbox) cb.addEventListener('change', () => { if (cb.checked) topCheckbox.checked = false; });
 });
 
+// Require at least one genre to be checked
+const realGenreCheckboxes = genreCheckboxes.filter(cb => cb !== topCheckbox); // exclude "Favorites Only"
+realGenreCheckboxes.forEach(cb => {
+  cb.addEventListener('change', () => {
+    if (!realGenreCheckboxes.some(c => c.checked)) {
+      cb.checked = true; // prevent last genre from being unchecked
+    }
+  });
+});
+
 // Dual-thumb slider logic
 const track = document.getElementById('sliderTrack');
 const range = document.getElementById('sliderRange');
@@ -219,6 +229,7 @@ function pickMovie() {
     document.getElementById('result').textContent = "No matching titles found.";
     return;
   }
+
 
   const choice = filtered[Math.floor(Math.random()*filtered.length)];
   const resultDiv = document.getElementById('result');
