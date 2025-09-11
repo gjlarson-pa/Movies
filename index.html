@@ -40,10 +40,10 @@ button {
   margin-bottom: 15px;
 }
 .checkbox-grid {
-  margin: 20px auto;
+  margin: 20px auto 0;
   display: grid;
   grid-template-columns: repeat(3, auto);
-  gap: 10px 12px;
+  gap: 10px 8px;
   justify-content: center;
   font-size: 12px;
 }
@@ -53,6 +53,28 @@ label {
   gap: 6px;
   cursor: pointer;
   white-space: nowrap;
+}
+.collapsible {
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  overflow: hidden;
+}
+.collapsible.show {
+  visibility: visible;
+  height: auto;
+  margin: initial;
+}
+#toggleCheckboxes {
+  background: #333;
+  font-size: 12px;
+  padding: 6px 10px;
+  margin: -27px auto 0;  /* tight when collapsed */
+  display: block;
+  transition: margin 0.2s ease;
+}
+#toggleCheckboxes.expanded {
+  margin: 12px auto 0; /* spaced when expanded */
 }
 .slider-container {
   width: 90%;
@@ -103,26 +125,39 @@ label {
 <div id="result"></div>
 <button id="pickButton" onclick="pickMovie()">Surprise Me!</button>
 
-<div class="checkbox-grid">
+<!-- All checkboxes in one grid -->
+<div class="checkbox-grid" id="checkboxGrid">
+  <!-- Always visible -->
   <label><input type="checkbox" id="movie" checked> <div style="color: #f9d342;"><b>Movies</b></div></label>
   <label><input type="checkbox" id="miniseries" checked> <div style="color: #f9d342;"><b>Miniseries</b></div></label>
   <label><input type="checkbox" id="tvshow" checked> <div style="color: #f9d342;"><b>TV Shows</b></div></label>
-  <label><input type="checkbox" id="starwars" checked> Star Wars</label>
-  <label><input type="checkbox" id="disney" checked> Disney</label>
-  <label><input type="checkbox" id="adventure" checked> Action / Adventure</label>
-  <label><input type="checkbox" id="comedy" checked> Comedy</label>
-  <label><input type="checkbox" id="drama" checked> Drama</label>
-  <label><input type="checkbox" id="family" checked> Family</label>
-  <label><input type="checkbox" id="musical" checked> Musical</label>
-  <label><input type="checkbox" id="mystery" checked> Mystery</label>
-  <label><input type="checkbox" id="scifi" checked> Sci-Fi / Fantasy</label>
-  <label><input type="checkbox" id="documentary"> Documentary</label>
-  <label><input type="checkbox" id="standup"> Stand-up</label>
-  <label><input type="checkbox" id="variety"> Variety</label>
-  <label><input type="checkbox" id="halloween"> Halloween</label>
-  <label><input type="checkbox" id="christmas"> Christmas</label>
-  <label><input type="checkbox" id="top"> <div style="color: #f9d342;">Only the Best</div></label>
+  <label><input type="checkbox" id="top" checked> <strong> Only the Best</strong></label>
+  <label><input type="checkbox" id="starwars"> Star Wars</label>
+  <label><input type="checkbox" id="disney"> Disney</label>
+  <label><input type="checkbox" id="adventure"> Action / Adventure</label>
+  <label><input type="checkbox" id="comedy"> Comedy</label>
+  <label><input type="checkbox" id="drama"> Drama</label>
+  <label><input type="checkbox" id="family"> Family</label>
+  <label><input type="checkbox" id="musical"> Musical</label>
+  <label><input type="checkbox" id="scifi"> Sci-Fi / Fantasy</label>
+
+  <!-- Collapsible rows -->
+  <label class="collapsible"><input type="checkbox" id="documentary"> Documentary</label>
+  <label class="collapsible"><input type="checkbox" id="standup"> Stand-up</label>
+  <label class="collapsible"><input type="checkbox" id="variety"> Variety</label>
+  <label class="collapsible"><input type="checkbox" id="biopic"> Biography</label>
+  <label class="collapsible"><input type="checkbox" id="crime"> Crime</label>
+  <label class="collapsible"><input type="checkbox" id="history"> History</label>
+  <label class="collapsible"><input type="checkbox" id="Horror"> Horror</label>
+  <label class="collapsible"><input type="checkbox" id="mystery"> Mystery</label>
+  <label class="collapsible"><input type="checkbox" id="romance"> Romance</label>
+  <label class="collapsible"><input type="checkbox" id="sitcom"> Sitcom</label>
+  <label class="collapsible"><input type="checkbox" id="halloween"> Halloween</label>
+  <label class="collapsible"><input type="checkbox" id="christmas"> Christmas</label>
 </div>
+
+<!-- Button outside grid -->
+<button id="toggleCheckboxes">See More ▼</button>
 
 <div class="slider-container">
   <div class="slider-label">Years: <span id="yearValue">1920-2025</span></div>
@@ -131,41 +166,72 @@ label {
     <div class="thumb" id="thumbMin"></div>
     <div class="thumb" id="thumbMax"></div>
   </div>
-  <div class="slider-values">
-  </div>
+  <div class="slider-values"></div>
 </div>
 
-<!-- Include movies.js -->
 <script src="movies.js"></script>
 
 <script>
-// Type checkboxes logic
-const typeCheckboxes = [document.getElementById('movie'), document.getElementById('miniseries'), document.getElementById('tvshow')];
-typeCheckboxes.forEach(cb => cb.addEventListener('change', () => {
-  if (!typeCheckboxes.some(c => c.checked)) cb.checked = true;
-}));
+// --- See More / See Less ---
+const toggleBtn = document.getElementById("toggleCheckboxes");
+const collapsibles = document.querySelectorAll(".collapsible");
+let expanded = false;
 
-// Genre checkboxes logic
+toggleBtn.addEventListener("click", () => {
+  expanded = !expanded;
+  collapsibles.forEach(c => c.classList.toggle("show", expanded));
+  toggleBtn.textContent = expanded ? "See Less ▲" : "See More ▼";
+  toggleBtn.classList.toggle("expanded", expanded); // adjust margin spacing
+});
+
+// --- Enforce at least one type and one genre ---
+const typeCheckboxes = [
+  document.getElementById('movie'),
+  document.getElementById('miniseries'),
+  document.getElementById('tvshow')
+];
+
+const genreCheckboxes = Array.from(
+  document.querySelectorAll('.checkbox-grid input[type="checkbox"]')
+).filter(cb => !typeCheckboxes.includes(cb));
+
 const topCheckbox = document.getElementById('top');
-const genreCheckboxes = Array.from(document.querySelectorAll('.checkbox-grid input[type="checkbox"]')).filter(cb => !typeCheckboxes.includes(cb));
-topCheckbox.addEventListener('change', () => {
-  if (topCheckbox.checked) genreCheckboxes.forEach(cb => { if (cb !== topCheckbox) cb.checked = false; });
-});
-genreCheckboxes.forEach(cb => {
-  if (cb !== topCheckbox) cb.addEventListener('change', () => { if (cb.checked) topCheckbox.checked = false; });
-});
 
-// Require at least one genre to be checked
-const realGenreCheckboxes = genreCheckboxes.filter(cb => cb !== topCheckbox); // exclude "Favorites Only"
-realGenreCheckboxes.forEach(cb => {
-  cb.addEventListener('change', () => {
-    if (!realGenreCheckboxes.some(c => c.checked)) {
-      cb.checked = true; // prevent last genre from being unchecked
-    }
+function enforceAtLeastOne(checkboxes) {
+  checkboxes.forEach(cb => {
+    cb.addEventListener("change", () => {
+      const checked = checkboxes.filter(c => c.checked);
+      if (checked.length === 0) {
+        cb.checked = true; // prevent unchecking the last one
+      }
+    });
   });
+}
+
+enforceAtLeastOne(typeCheckboxes);
+enforceAtLeastOne(genreCheckboxes);
+
+// --- Mutually exclusive logic for "Only the Best" ---
+topCheckbox.addEventListener("change", () => {
+  if (topCheckbox.checked) {
+    genreCheckboxes.forEach(cb => {
+      if (cb !== topCheckbox) cb.checked = false;
+    });
+  }
 });
 
-// Dual-thumb slider logic
+// When another genre is checked, uncheck "Only the Best"
+genreCheckboxes.forEach(cb => {
+  if (cb !== topCheckbox) {
+    cb.addEventListener("change", () => {
+      if (cb.checked) {
+        topCheckbox.checked = false;
+      }
+    });
+  }
+});
+
+// --- Slider logic ---
 const track = document.getElementById('sliderTrack');
 const range = document.getElementById('sliderRange');
 const thumbMin = document.getElementById('thumbMin');
@@ -185,7 +251,6 @@ function updateSliderUI() {
   range.style.width = (percentMax - percentMin) + '%';
   yearValue.textContent = `${currentMin}-${currentMax}`;
 }
-
 function dragThumb(thumb, isMin) {
   let dragging = false;
   const startDrag = e => { dragging = true; e.preventDefault(); };
@@ -208,12 +273,11 @@ function dragThumb(thumb, isMin) {
   document.addEventListener('mouseup', stopDrag);
   document.addEventListener('touchend', stopDrag);
 }
-
 dragThumb(thumbMin, true);
 dragThumb(thumbMax, false);
 updateSliderUI();
 
-// Pick movie function using movies from movies.js
+// --- Pick movie ---
 function pickMovie() {
   const selectedTypes = typeCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
   const selectedGenres = genreCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
@@ -222,33 +286,26 @@ function pickMovie() {
     m.year >= currentMin &&
     m.year <= currentMax &&
     m.type.some(t => selectedTypes.includes(t)) &&
-    (selectedGenres.includes('top') ? m.genres.includes('top') : selectedGenres.length === 0 || m.genres.some(g => selectedGenres.includes(g)))
+    (selectedGenres.includes('top') ? m.genres.includes('top') :
+      selectedGenres.length === 0 || m.genres.some(g => selectedGenres.includes(g)))
   );
 
+  const resultDiv = document.getElementById('result');
   if (filtered.length === 0) {
-    document.getElementById('result').textContent = "No matching titles found.";
+    resultDiv.textContent = "No matching titles found.";
     return;
   }
 
-  const resultDiv = document.getElementById('result');
-  const totalFlashes = 18;      // number of quick cycles
-  const flashInterval = 50;     // ms between flashes
+  const totalFlashes = 18, flashInterval = 50;
   let flashes = 0;
-
   const flashTimer = setInterval(() => {
     const tempChoice = filtered[Math.floor(Math.random()*filtered.length)];
-
-    // Only show title and year while flashing
     resultDiv.innerHTML = `<em>${tempChoice.name}</em> <small>(${tempChoice.year})</small>`;
-
     flashes++;
     if (flashes >= totalFlashes) {
       clearInterval(flashTimer);
-
-      // Show final choice with Google search
       const finalChoice = filtered[Math.floor(Math.random()*filtered.length)];
       const googleSearch = `https://www.google.com/search?q=${encodeURIComponent(finalChoice.name + ' (' + finalChoice.year + ') streaming')}`;
-
       resultDiv.innerHTML = `
         <em>${finalChoice.name}</em> <small>(${finalChoice.year})</small>
         <a href="${googleSearch}" target="_blank">🔎 Search on Google</a>
@@ -256,9 +313,6 @@ function pickMovie() {
     }
   }, flashInterval);
 }
-
 </script>
-<p style="font-size: 12px; color: #808080;">
-Created by Greg<br><small>Revised: Sept. 2025</small>
 </body>
 </html>
