@@ -405,4 +405,5 @@ const movies = [
 {name:"Your Friend, Nate Bargatze", year:2024, genres:["standup"], type:["movie"]},
 {name:"Zathura: A Space Adventure", year:2005, genres:["scifi","family"], type:["movie"]},
 {name:"Zombieland", year:2009, genres:["halloween"], type:["movie"]},
-{name:"Zootopia", year:2016, genres:["disney","family"], type:["movie"]},
+{name:"Zootopia", year:2016, genres:["disney","family"], type:["movie"]}
+];
