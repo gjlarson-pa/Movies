@@ -69,12 +69,12 @@ label {
   background: #333;
   font-size: 12px;
   padding: 6px 10px;
-  margin: -27px auto 0;  /* tight when collapsed */
+  margin: -27px auto 0;
   display: block;
   transition: margin 0.2s ease;
 }
 #toggleCheckboxes.expanded {
-  margin: 12px auto 0; /* spaced when expanded */
+  margin: 12px auto 0;
 }
 .slider-container {
   width: 90%;
@@ -125,9 +125,7 @@ label {
 <div id="result"></div>
 <button id="pickButton" onclick="pickMovie()">Pick for Me!</button>
 
-<!-- All checkboxes in one grid -->
 <div class="checkbox-grid" id="checkboxGrid">
-  <!-- Always visible -->
   <label><input type="checkbox" id="movie" checked> <div style="color: #f9d342;"><b>Movies</b></div></label>
   <label><input type="checkbox" id="miniseries" checked> <div style="color: #f9d342;"><b>Miniseries</b></div></label>
   <label><input type="checkbox" id="tvshow" checked> <div style="color: #f9d342;"><b>TV Shows</b></div></label>
@@ -141,7 +139,6 @@ label {
   <label><input type="checkbox" id="musical"> Musical</label>
   <label><input type="checkbox" id="scifi"> Sci-Fi / Fantasy</label>
 
-  <!-- Collapsible rows -->
   <label class="collapsible"><input type="checkbox" id="documentary"> Documentary</label>
   <label class="collapsible"><input type="checkbox" id="standup"> Stand-up</label>
   <label class="collapsible"><input type="checkbox" id="variety"> Variety</label>
@@ -156,7 +153,6 @@ label {
   <label class="collapsible"><input type="checkbox" id="christmas"> Christmas</label>
 </div>
 
-<!-- Button outside grid -->
 <button id="toggleCheckboxes">See More ▼</button>
 
 <div class="slider-container">
@@ -172,7 +168,6 @@ label {
 <script src="movies.js"></script>
 
 <script>
-// --- See More / See Less ---
 const toggleBtn = document.getElementById("toggleCheckboxes");
 const collapsibles = document.querySelectorAll(".collapsible");
 let expanded = false;
@@ -181,10 +176,9 @@ toggleBtn.addEventListener("click", () => {
   expanded = !expanded;
   collapsibles.forEach(c => c.classList.toggle("show", expanded));
   toggleBtn.textContent = expanded ? "See Less ▲" : "See More ▼";
-  toggleBtn.classList.toggle("expanded", expanded); // adjust margin spacing
+  toggleBtn.classList.toggle("expanded", expanded);
 });
 
-// --- Enforce at least one type and one genre ---
 const typeCheckboxes = [
   document.getElementById('movie'),
   document.getElementById('miniseries'),
@@ -202,16 +196,14 @@ function enforceAtLeastOne(checkboxes) {
     cb.addEventListener("change", () => {
       const checked = checkboxes.filter(c => c.checked);
       if (checked.length === 0) {
-        cb.checked = true; // prevent unchecking the last one
+        cb.checked = true;
       }
     });
   });
 }
-
 enforceAtLeastOne(typeCheckboxes);
 enforceAtLeastOne(genreCheckboxes);
 
-// --- Mutually exclusive logic for "Only the Best" ---
 topCheckbox.addEventListener("change", () => {
   if (topCheckbox.checked) {
     genreCheckboxes.forEach(cb => {
@@ -219,8 +211,6 @@ topCheckbox.addEventListener("change", () => {
     });
   }
 });
-
-// When another genre is checked, uncheck "Only the Best"
 genreCheckboxes.forEach(cb => {
   if (cb !== topCheckbox) {
     cb.addEventListener("change", () => {
@@ -231,7 +221,6 @@ genreCheckboxes.forEach(cb => {
   }
 });
 
-// --- Slider logic ---
 const track = document.getElementById('sliderTrack');
 const range = document.getElementById('sliderRange');
 const thumbMin = document.getElementById('thumbMin');
@@ -296,15 +285,29 @@ function pickMovie() {
     return;
   }
 
+  // Weighted pool if 2–3 genres
+  let weightedPool;
+  if (selectedGenres.length > 1 && selectedGenres.length <= 3 && !selectedGenres.includes('top')) {
+    weightedPool = [];
+    filtered.forEach(movie => {
+      const matches = movie.genres.filter(g => selectedGenres.includes(g)).length;
+      for (let i = 0; i < matches; i++) {
+        weightedPool.push(movie);
+      }
+    });
+  } else {
+    weightedPool = filtered.slice();
+  }
+
   const totalFlashes = 18, flashInterval = 50;
   let flashes = 0;
   const flashTimer = setInterval(() => {
-    const tempChoice = filtered[Math.floor(Math.random()*filtered.length)];
+    const tempChoice = weightedPool[Math.floor(Math.random()*weightedPool.length)];
     resultDiv.innerHTML = `<em>${tempChoice.name}</em> <small>(${tempChoice.year})</small>`;
     flashes++;
     if (flashes >= totalFlashes) {
       clearInterval(flashTimer);
-      const finalChoice = filtered[Math.floor(Math.random()*filtered.length)];
+      const finalChoice = weightedPool[Math.floor(Math.random()*weightedPool.length)];
       const googleSearch = `https://www.google.com/search?q=${encodeURIComponent(finalChoice.name + ' (' + finalChoice.year + ') streaming')}`;
       resultDiv.innerHTML = `
         <em>${finalChoice.name}</em> <small>(${finalChoice.year})</small>
