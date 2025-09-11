@@ -271,13 +271,18 @@ function pickMovie() {
   const selectedTypes = typeCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
   const selectedGenres = genreCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
 
-  const filtered = movies.filter(m => 
-    m.year >= currentMin &&
-    m.year <= currentMax &&
-    m.type.some(t => selectedTypes.includes(t)) &&
-    (selectedGenres.includes('top') ? m.genres.includes('top') :
-      selectedGenres.length === 0 || m.genres.some(g => selectedGenres.includes(g)))
-  );
+  const filtered = movies.filter(m => {
+    const start = m.year;
+    const end = (m.length ? m.year + m.length - 1 : m.year);
+
+    return (
+      start <= currentMax &&
+      end >= currentMin &&
+      m.type.some(t => selectedTypes.includes(t)) &&
+      (selectedGenres.includes('top') ? m.genres.includes('top') :
+        selectedGenres.length === 0 || m.genres.some(g => selectedGenres.includes(g)))
+    );
+  });
 
   const resultDiv = document.getElementById('result');
   if (filtered.length === 0) {
@@ -317,5 +322,8 @@ function pickMovie() {
   }, flashInterval);
 }
 </script>
+<p style="font-size: 12px; color: #808080;">
+[ <a href="https://forms.gle/mHgL7tzYGadhfRH68" style="color: #4da3ff;">Suggest a Title</a> ]</p>
+<p style="font-size: 12px; color: #808080;">Created by Greg</p>
 </body>
 </html>
