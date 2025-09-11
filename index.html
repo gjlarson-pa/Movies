@@ -123,7 +123,7 @@ label {
 <body>
 <h1>What to Watch</h1>
 <div id="result"></div>
-<button id="pickButton" onclick="pickMovie()">Pick for Me!</button>
+<button id="pickButton" onclick="pickMovie()"><strong>Pick for Me!</strong></button>
 
 <div class="checkbox-grid" id="checkboxGrid">
   <label><input type="checkbox" id="movie" checked> <div style="color: #f9d342;"><b>Movies</b></div></label>
@@ -287,8 +287,15 @@ function pickMovie() {
   });
 
   const resultDiv = document.getElementById('result');
+
   if (filtered.length === 0) {
-    resultDiv.textContent = "No matching titles found.";
+    resultDiv.textContent = "No matching titles found, please expand your selections.";
+    return;
+  }
+
+  // 🔹 New check for fewer than 3 results
+  if (filtered.length < 3) {
+    resultDiv.textContent = "Not enough titles, please expand your selections.";
     return;
   }
 
