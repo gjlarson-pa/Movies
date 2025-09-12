@@ -1,88 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" type="image/png" href="/FavIcon.png">
 <meta charset="UTF-8">
 <title>What to Watch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {
-    background: #111;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 5px;
-}
-h1 { margin-bottom: 25px; margin-top: 15px }
-#result {
-    font-size: 20px;
-    font-weight: bold;
-    color: #f9d342;
-    margin-bottom: 20px;
-    height: 100px;
-    line-height: 1.0;
-}
+body { background: #111; color: #fff; font-family: Arial, sans-serif; text-align: center; padding: 5px; }
+h1 { margin-top: 15px; margin-bottom: 20px; }
+#result { font-size: 20px; font-weight: bold; color: #f9d342; margin-bottom: 20px; height: 100px; line-height: 1.0; }
 #result a { display: block; margin-top: 10px; font-size: 12px; color: #4da3ff; text-decoration: none; }
 #result a:hover { text-decoration: underline; }
-button {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 6px;
-    margin-bottom: 15px;
-}
-.checkbox-grid {
-    margin: 20px auto 0;
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    gap: 10px 8px;
-    justify-content: center;
-    font-size: 12px;
-}
-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    white-space: nowrap;
-}
-.collapsible { visibility: hidden; height: 0; margin: 0; overflow: hidden; }
-.collapsible.show { visibility: visible; height: auto; margin: initial; }
-#toggleCheckboxes {
-    background: #333;
-    font-size: 12px;
-    padding: 6px 10px;
-    margin: -32px auto 0;
-    display: block;
-    transition: margin 0.2s ease;
-}
-#toggleCheckboxes.expanded { margin: 14px auto 0; }
-
+button { background: #28a745; color: white; border: none; padding: 12px 20px; font-size: 16px; cursor: pointer; border-radius: 6px; margin-bottom: 15px; min-width: 180px; max-width: 220px; display: inline-block; }
+button.disabled { background: #555; cursor: default; }
 .slider-container { width: 90%; max-width: 400px; margin: 20px auto; }
 .slider-label { font-size: 14px; margin-bottom: 16px; }
 .slider-track { position: relative; height: 12px; background: #444; border-radius: 6px; }
 .slider-range { position: absolute; height: 100%; border-radius: 6px; background: #888; }
-.thumb {
-    position: absolute;
-    top: 50%;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    touch-action: none;
-}
+.thumb { position: absolute; top: 50%; width: 20px; height: 20px; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; transition: box-shadow 0.2s; }
 .slider-values { display: flex; justify-content: space-between; font-size: 12px; margin-top: 10px; }
 
-@media (max-width: 450px) {
-    body { padding: 15px; }
-    #result { font-size: 20px; height: 120px; }
-    button { font-size: 14px; padding: 10px 16px; }
-    .thumb { width: 16px; height: 16px; }
-    .checkbox-grid { font-size: 11px; gap: 10px 8px; }
+.checkbox-grid { 
+    width: 90%; 
+    max-width: 400px; 
+    margin: 20px auto 0; 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 10px 8px; 
+    font-size: 12px; 
+    text-align: left;
+}
+
+label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }
+.collapsible { visibility: hidden; height: 0; margin: 0; overflow: hidden; }
+.collapsible.show { visibility: visible; height: auto; margin: initial; }
+#toggleCheckboxes { background: #333; font-size: 12px; padding: 6px 10px; margin: -37px auto 0; display: block; transition: margin 0.2s ease; }
+#toggleCheckboxes.expanded { margin: 10px auto 0; }
+.check-all-container { grid-column: 1 / span 3; display: none; justify-content: center; margin-top: 10px; margin-bottom: 5px; gap: 15px; }
+.check-all-container button { padding: 4px 10px; font-size: 12px; border-radius: 4px; background: #4da3ff; color: white; border: none; cursor: pointer; }
+
+@media (max-width: 450px) { 
+    body { padding: 15px; } 
+    #result { font-size: 20px; height: 120px; } 
+    button { font-size: 14px; padding: 10px 16px; } 
+    .thumb { width: 16px; height: 16px; } 
+    .checkbox-grid { font-size: 11px; gap: 10px 8px; } 
 }
 </style>
 </head>
@@ -90,7 +51,7 @@ label {
 
 <h1>What to Watch</h1>
 <div id="result"></div>
-<button id="pickButton" onclick="pickMovie()"><strong>Pick for Me!</strong></button>
+<button id="pickButton"><strong>Pick for Me!</strong></button>
 
 <!-- Quality slider -->
 <div class="slider-container">
@@ -99,18 +60,14 @@ label {
         <div class="slider-range" id="qualityRange"></div>
         <div class="thumb" id="qualityThumb"></div>
     </div>
-    <div class="slider-values">
-        <span>Gold</span> <span>Silver</span> <span>Bronze</span> <span>All</span>
-    </div>
+    <div class="slider-values"><span>Gold</span> <span>Silver</span> <span>Bronze</span> <span>All</span></div>
 </div>
 
-<!-- Checkboxes -->
+<!-- Type and Genre selection -->
 <div class="checkbox-grid" id="checkboxGrid">
-    <!-- Types -->
     <label><input type="checkbox" id="movie" checked> <div style="color: #f9d342;"><b>Movies</b></div></label>
     <label><input type="checkbox" id="miniseries" checked> <div style="color: #f9d342;"><b>Miniseries</b></div></label>
     <label><input type="checkbox" id="tvshow" checked> <div style="color: #f9d342;"><b>TV Shows</b></div></label>
-    <!-- Genres -->
     <label><input type="checkbox" id="starwars" checked> Star Wars</label>
     <label><input type="checkbox" id="disney" checked> Disney</label>
     <label><input type="checkbox" id="action" checked> Action</label>
@@ -120,22 +77,30 @@ label {
     <label><input type="checkbox" id="family" checked> Family</label>
     <label><input type="checkbox" id="fantasy" checked> Fantasy</label>
     <label><input type="checkbox" id="scifi" checked> Sci-Fi</label>
-    <label class="collapsible"><input type="checkbox" id="documentary"> Documentary</label>
-    <label class="collapsible"><input type="checkbox" id="standup"> Stand-up</label>
-    <label class="collapsible"><input type="checkbox" id="variety"> Variety</label>
+    <label class="collapsible"><input type="checkbox" id="animation"> Animation</label>
     <label class="collapsible"><input type="checkbox" id="biopic"> Biography</label>
     <label class="collapsible"><input type="checkbox" id="crime"> Crime</label>
+    <label class="collapsible"><input type="checkbox" id="documentary"> Documentary</label>
     <label class="collapsible"><input type="checkbox" id="history"> History</label>
-    <label class="collapsible"><input type="checkbox" id="Horror"> Horror</label>
+    <label class="collapsible"><input type="checkbox" id="horror"> Horror</label>
     <label class="collapsible"><input type="checkbox" id="musical"> Musical</label>
     <label class="collapsible"><input type="checkbox" id="mystery"> Mystery</label>
+    <label class="collapsible"><input type="checkbox" id="reality"> Reality</label>
     <label class="collapsible"><input type="checkbox" id="romance"> Romance</label>
     <label class="collapsible"><input type="checkbox" id="sports"> Sports</label>
     <label class="collapsible"><input type="checkbox" id="serial"> Serials</label>
     <label class="collapsible"><input type="checkbox" id="sitcom"> Sitcoms</label>
+    <label class="collapsible"><input type="checkbox" id="standup"> Stand-up</label>
+    <label class="collapsible"><input type="checkbox" id="variety"> Variety</label>
     <label class="collapsible"><input type="checkbox" id="halloween"> Halloween</label>
     <label class="collapsible"><input type="checkbox" id="christmas"> Christmas</label>
 </div>
+
+<div class="check-all-container" id="checkAllContainer">
+    <button id="checkAllBtn">Check All</button>
+    <button id="uncheckAllBtn">Uncheck All</button>
+</div>
+
 <button id="toggleCheckboxes">See More ▼</button>
 
 <!-- Year slider -->
@@ -146,201 +111,183 @@ label {
         <div class="thumb" id="thumbMin"></div>
         <div class="thumb" id="thumbMax"></div>
     </div>
-    <div class="slider-values"></div>
 </div>
-
-<script src="movies.js"></script>
-<script>
-// --- Collapsible genre toggle ---
-const toggleBtn = document.getElementById("toggleCheckboxes");
-const collapsibles = document.querySelectorAll(".collapsible");
-let expanded = false;
-toggleBtn.addEventListener("click", () => {
-    expanded = !expanded;
-    collapsibles.forEach(c => c.classList.toggle("show", expanded));
-    toggleBtn.textContent = expanded ? "See Less ▲" : "See More ▼";
-    toggleBtn.classList.toggle("expanded", expanded);
-});
-
-// --- Checkbox setup ---
-const typeCheckboxes = [
-    document.getElementById('movie'),
-    document.getElementById('miniseries'),
-    document.getElementById('tvshow')
-];
-const genreCheckboxes = Array.from(
-    document.querySelectorAll('.checkbox-grid input[type="checkbox"]')
-).filter(cb => !typeCheckboxes.includes(cb));
-
-function enforceAtLeastOne(checkboxes) {
-    checkboxes.forEach(cb => {
-        cb.addEventListener("change", () => {
-            const checked = checkboxes.filter(c => c.checked);
-            if (checked.length === 0) cb.checked = true;
-        });
-    });
-}
-enforceAtLeastOne(typeCheckboxes);
-enforceAtLeastOne(genreCheckboxes);
-
-// --- Year Slider ---
-const track = document.getElementById('sliderTrack');
-const range = document.getElementById('sliderRange');
-const thumbMin = document.getElementById('thumbMin');
-const thumbMax = document.getElementById('thumbMax');
-const yearValue = document.getElementById('yearValue');
-const sliderMin = 1920, sliderMax = 2030;
-let currentMin = 1925, currentMax = 2025;
-
-function updateSliderUI() {
-    const percentMin = ((currentMin - sliderMin)/(sliderMax - sliderMin))*100;
-    const percentMax = ((currentMax - sliderMin)/(sliderMax - sliderMin))*100;
-    thumbMin.style.left = percentMin + '%';
-    thumbMax.style.left = percentMax + '%';
-    range.style.left = percentMin + '%';
-    range.style.width = (percentMax - percentMin) + '%';
-    yearValue.textContent = `${currentMin}-${currentMax}`;
-}
-
-function dragThumb(thumb, isMin) {
-    let dragging = false;
-    const startDrag = e => { dragging = true; e.preventDefault(); };
-    const stopDrag = () => dragging = false;
-    const onDrag = e => {
-        if (!dragging) return;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const rect = track.getBoundingClientRect();
-        let percent = ((clientX - rect.left) / rect.width) * 100;
-        percent = Math.max(0, Math.min(100, percent));
-        const value = Math.round(sliderMin + (percent/100)*(sliderMax-sliderMin));
-        if (isMin) currentMin = Math.min(value, currentMax);
-        else currentMax = Math.max(value, currentMin);
-        updateSliderUI();
-    };
-    thumb.addEventListener('mousedown', startDrag);
-    thumb.addEventListener('touchstart', startDrag);
-    document.addEventListener('mousemove', onDrag);
-    document.addEventListener('touchmove', onDrag);
-    document.addEventListener('mouseup', stopDrag);
-    document.addEventListener('touchend', stopDrag);
-}
-dragThumb(thumbMin, true);
-dragThumb(thumbMax, false);
-updateSliderUI();
-
-// --- Quality Slider ---
-const qualityTrack = document.getElementById("qualityTrack");
-const qualityRange = document.getElementById("qualityRange");
-const qualityThumb = document.getElementById("qualityThumb");
-const qualityLabel = document.getElementById("qualityLabel");
-const qualityLevels = ["Gold", "Silver", "Bronze", "All"];
-let qualityValue = 0; // Default Gold
-
-function updateQualityUI() {
-    const percent = (qualityValue / 3) * 100;
-    qualityThumb.style.left = percent + "%";
-    qualityRange.style.left = "0%";
-    qualityRange.style.width = percent + "%";
-    qualityRange.style.background = "#888"; // medium grey
-    qualityLabel.textContent = qualityLevels[qualityValue];
-
-    switch (qualityValue) {
-        case 0: qualityThumb.style.background = "gold"; break;
-        case 1: qualityThumb.style.background = "silver"; break;
-        case 2: qualityThumb.style.background = "peru"; break;
-        case 3: qualityThumb.style.background = "#4da3ff"; break;
-    }
-}
-
-function dragQualityThumb() {
-    let dragging = false;
-    const startDrag = e => { dragging = true; e.preventDefault(); };
-    const stopDrag = () => { if (!dragging) return; dragging = false; qualityValue = Math.round(qualityValue); updateQualityUI(); };
-    const onDrag = e => {
-        if (!dragging) return;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const rect = qualityTrack.getBoundingClientRect();
-        let percent = ((clientX - rect.left) / rect.width) * 3;
-        qualityValue = Math.max(0, Math.min(3, percent));
-        updateQualityUI();
-    };
-    qualityThumb.addEventListener('mousedown', startDrag);
-    qualityThumb.addEventListener('touchstart', startDrag);
-    document.addEventListener('mousemove', onDrag);
-    document.addEventListener('touchmove', onDrag);
-    document.addEventListener('mouseup', stopDrag);
-    document.addEventListener('touchend', stopDrag);
-}
-dragQualityThumb();
-updateQualityUI();
-
-// --- Allowed Ratings ---
-function getAllowedRatings(level) {
-    switch (parseInt(level)) {
-        case 0: return ["gold"];
-        case 1: return ["gold","silver"];
-        case 2: return ["gold","silver","bronze"];
-        case 3: return ["gold","silver","bronze", null]; // All
-    }
-}
-
-// --- Pick movie ---
-function pickMovie() {
-    const selectedGenres = genreCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
-
-    function filterMovies() {
-        const selectedTypes = typeCheckboxes.filter(cb => cb.checked).map(cb => cb.id);
-        const allowedRatings = getAllowedRatings(Math.round(qualityValue));
-        return movies.filter(m => {
-            const start = m.year;
-            const end = (m.length ? m.year + m.length - 1 : m.year);
-            const matchesType = m.type.some(t => selectedTypes.includes(t));
-            const matchesYear = start <= currentMax && end >= currentMin;
-            const matchesGenre = selectedGenres.length === 0 || m.genres.some(g => selectedGenres.includes(g));
-            const matchesRating = allowedRatings.some(r => r === null || (m.rating && m.rating.map(x => x.toLowerCase()).includes(r)));
-            return matchesType && matchesYear && matchesGenre && matchesRating;
-        });
-    }
-
-    let filtered = filterMovies();
-
-    if (filtered.length < 3) {
-        // Set quality to All
-        qualityValue = 3;
-        updateQualityUI();
-
-        // Check all 3 types
-        typeCheckboxes.forEach(cb => cb.checked = true);
-
-        // Re-filter
-        filtered = filterMovies();
-    }
-
-    const resultDiv = document.getElementById('result');
-    if (filtered.length === 0) {
-        resultDiv.textContent = "No matching titles found, please expand your selections.";
-        return;
-    }
-
-    let weightedPool = filtered.slice();
-    const totalFlashes = 18, flashInterval = 50;
-    let flashes = 0;
-    const flashTimer = setInterval(() => {
-        const tempChoice = weightedPool[Math.floor(Math.random()*weightedPool.length)];
-        resultDiv.innerHTML = `<em>${tempChoice.name}</em> <small>(${tempChoice.year})</small>`;
-        flashes++;
-        if (flashes >= totalFlashes) {
-            clearInterval(flashTimer);
-            const finalChoice = weightedPool[Math.floor(Math.random()*weightedPool.length)];
-            const googleSearch = `https://www.google.com/search?q=${encodeURIComponent(finalChoice.name + ' (' + finalChoice.year + ') streaming')}`;
-            resultDiv.innerHTML = `<em>${finalChoice.name}</em> <small>(${finalChoice.year})</small> <a href="${googleSearch}" target="_blank">🔎 Search on Google</a>`;
-        }
-    }, flashInterval);
-}
-</script>
 
 <p style="font-size: 12px; color: #808080;">[ <a href="https://forms.gle/mHgL7tzYGadhfRH68" style="color: #4da3ff;">Suggest a Title</a> ]</p>
 <p style="font-size: 12px; color: #808080;">Created by Greg</p>
 
+<script src="movies.js"></script>
+<script>
+// --- Collapsible ---
+const toggleBtn = document.getElementById("toggleCheckboxes");
+const collapsibles = document.querySelectorAll(".collapsible");
+const checkAllContainer = document.getElementById("checkAllContainer");
+toggleBtn.addEventListener("click", () => {
+    const expanded = !toggleBtn.classList.contains("expanded");
+    collapsibles.forEach(c => c.classList.toggle("show", expanded));
+    checkAllContainer.style.display = expanded ? "flex" : "none";
+    toggleBtn.textContent = expanded ? "See Less ▲" : "See More ▼";
+    toggleBtn.classList.toggle("expanded", expanded);
+});
+
+// --- Checkboxes ---
+const genreCheckboxes = Array.from(document.querySelectorAll('.checkbox-grid input[type="checkbox"]'))
+    .filter(cb => !['movie','miniseries','tvshow'].includes(cb.id));
+document.getElementById("checkAllBtn").addEventListener("click", () => { genreCheckboxes.forEach(cb => cb.checked = true); updatePickButtonState(); });
+document.getElementById("uncheckAllBtn").addEventListener("click", () => { genreCheckboxes.forEach(cb => cb.checked = false); updatePickButtonState(); });
+
+const typeCheckboxes = [document.getElementById('movie'), document.getElementById('miniseries'), document.getElementById('tvshow')];
+[typeCheckboxes, genreCheckboxes].flat().forEach(cb => cb.addEventListener("change", updatePickButtonState));
+
+// --- Sliders ---
+let sliderMin = 1920, sliderMax = 2030;
+let currentMin = 1920, currentMax = 2025;
+const track = document.getElementById('sliderTrack'), range = document.getElementById('sliderRange');
+const thumbMin = document.getElementById('thumbMin'), thumbMax = document.getElementById('thumbMax');
+const yearValue = document.getElementById('yearValue');
+
+function updateYearSliderUI(){
+    const pMin = ((currentMin-sliderMin)/(sliderMax-sliderMin))*100;
+    const pMax = ((currentMax-sliderMin)/(sliderMax-sliderMin))*100;
+    thumbMin.style.left = pMin+'%';
+    thumbMax.style.left = pMax+'%';
+    range.style.left = pMin+'%';
+    range.style.width = (pMax-pMin)+'%';
+    yearValue.textContent = `${currentMin}-${currentMax}`;
+}
+function dragThumb(thumb,isMin){
+    let dragging=false;
+    const start=e=>{dragging=true;e.preventDefault();};
+    const stop=e=>{dragging=false; updateYearSliderUI(); updatePickButtonState();};
+    const move=e=>{
+        if(!dragging) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const rect = track.getBoundingClientRect();
+        let percent = (clientX-rect.left)/rect.width*100;
+        percent = Math.max(0,Math.min(100,percent));
+        let value = Math.round(sliderMin + percent*(sliderMax-sliderMin)/100);
+        if(isMin) currentMin=Math.min(value,currentMax);
+        else currentMax=Math.max(value,currentMin);
+        updateYearSliderUI(); updatePickButtonState();
+    };
+    thumb.addEventListener('mousedown',start);
+    thumb.addEventListener('touchstart',start);
+    document.addEventListener('mousemove',move);
+    document.addEventListener('touchmove',move);
+    document.addEventListener('mouseup',stop);
+    document.addEventListener('touchend',stop);
+}
+dragThumb(thumbMin,true);
+dragThumb(thumbMax,false);
+updateYearSliderUI();
+
+// Quality slider
+const qualityTrack = document.getElementById("qualityTrack"), qualityRange = document.getElementById("qualityRange"), qualityThumb = document.getElementById("qualityThumb"), qualityLabel = document.getElementById("qualityLabel"), qualityLevels=["Gold","Silver","Bronze","All"];
+let qualityValue=0, flashIntervalId=null;
+
+function updateQualityUI(){ 
+    qualityLabel.textContent=qualityLevels[qualityValue]; 
+    qualityThumb.style.left=(qualityValue/3*100)+"%"; 
+    qualityRange.style.left="0%"; 
+    qualityRange.style.width=(qualityValue/3*100)+"%"; 
+    switch(qualityValue){ 
+        case 0: qualityThumb.style.background="gold"; break; 
+        case 1: qualityThumb.style.background="silver"; break; 
+        case 2: qualityThumb.style.background="peru"; break; 
+        case 3: qualityThumb.style.background="#4da3ff"; break; 
+    } 
+}
+
+function dragQualityThumb(){
+    let dragging=false;
+    const start=e=>{dragging=true;e.preventDefault();};
+    const stop=e=>{dragging=false; qualityValue=Math.round(qualityValue); updateQualityUI(); updatePickButtonState();};
+    const move=e=>{
+        if(!dragging) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const rect = qualityTrack.getBoundingClientRect();
+        let val = (clientX-rect.left)/rect.width*3;
+        qualityValue=Math.max(0,Math.min(3,Math.round(val)));
+        updateQualityUI(); updatePickButtonState();
+    };
+    qualityThumb.addEventListener('mousedown',start);
+    qualityThumb.addEventListener('touchstart',start);
+    document.addEventListener('mousemove',move);
+    document.addEventListener('touchmove',move);
+    document.addEventListener('mouseup',stop);
+    document.addEventListener('touchend',stop);
+}
+dragQualityThumb();
+updateQualityUI();
+
+// --- Pick Button & flash logic ---
+const pickButton = document.getElementById('pickButton');
+function getAllowedRatings(level){switch(level){case 0:return["gold"]; case 1:return["gold","silver"]; case 2:return["gold","silver","bronze"]; case 3:return["gold","silver","bronze",null];}}
+function filterMovies(){
+    const selectedTypes=typeCheckboxes.filter(cb=>cb.checked).map(cb=>cb.id);
+    const selectedGenres=genreCheckboxes.filter(cb=>cb.checked).map(cb=>cb.id);
+    const allowedRatings=getAllowedRatings(qualityValue);
+    return movies.filter(m=>{
+        const start=m.year; const end=m.length?m.year+m.length-1:m.year;
+        const matchesType=selectedTypes.length===0?false:m.type.some(t=>selectedTypes.includes(t));
+        const matchesGenre=selectedGenres.length===0?false:m.genres.some(g=>selectedGenres.includes(g));
+        const matchesYear=start<=currentMax&&end>=currentMin;
+        const matchesRating=allowedRatings.some(r=>r===null||(m.rating&&m.rating.map(x=>x.toLowerCase()).includes(r)));
+        return matchesType && matchesGenre && matchesYear && matchesRating;
+    });
+}
+
+function updatePickButtonState(){
+    const pool=filterMovies();
+    let flashNeeded=false;
+    for(let i=qualityValue+1;i<=3;i++){
+        const tempAllowedRatings=getAllowedRatings(i);
+        const tempPool=movies.filter(m=>{
+            const start=m.year; const end=m.length?m.year+m.length-1:m.year;
+            const selectedTypes=typeCheckboxes.filter(cb=>cb.checked).map(cb=>cb.id);
+            const selectedGenres=genreCheckboxes.filter(cb=>cb.checked).map(cb=>cb.id);
+            const matchesType=selectedTypes.length===0?false:m.type.some(t=>selectedTypes.includes(t));
+            const matchesGenre=selectedGenres.length===0?false:m.genres.some(g=>selectedGenres.includes(g));
+            const matchesYear=start<=currentMax&&end>=currentMin;
+            const matchesRating=tempAllowedRatings.some(r=>r===null||(m.rating&&m.rating.map(x=>x.toLowerCase()).includes(r)));
+            return matchesType && matchesGenre && matchesYear && matchesRating;
+        });
+        if(pool.length<4 && tempPool.length>=4){ flashNeeded=true; break; }
+    }
+
+    if(flashNeeded){ 
+        if(!flashIntervalId){ 
+            flashIntervalId=setInterval(()=>{ qualityThumb.style.boxShadow=qualityThumb.style.boxShadow?"":"0 0 10px 4px white"; },400); 
+        } 
+    } else{ 
+        clearInterval(flashIntervalId); flashIntervalId=null; qualityThumb.style.boxShadow=""; 
+    }
+
+    if(pool.length<4){ pickButton.classList.add("disabled"); pickButton.textContent="Expand Selection"; pickButton.style.background="#555"; }
+    else if(pool.length<15){ pickButton.classList.remove("disabled"); pickButton.style.background="#28a745"; pickButton.innerHTML="<strong>Pick for Me!</strong>"; }
+    else{ pickButton.classList.remove("disabled"); pickButton.style.background="#28a745"; pickButton.innerHTML="<strong>Pick for Me!</strong>"; }
+}
+
+pickButton.addEventListener("click",()=>{
+    if(pickButton.classList.contains("disabled")) return;
+    const pool=filterMovies();
+    if(pool.length===0) return;
+    let flashes=0, totalFlashes=18, flashInterval=50;
+    const resultDiv=document.getElementById('result');
+    const flashTimer=setInterval(()=>{
+        const temp=pool[Math.floor(Math.random()*pool.length)];
+        resultDiv.innerHTML=`<em>${temp.name}</em> <small>(${temp.year})</small>`;
+        flashes++;
+        if(flashes>=totalFlashes){
+            clearInterval(flashTimer);
+            const finalChoice=pool[Math.floor(Math.random()*pool.length)];
+            const googleSearch=`https://www.google.com/search?q=${encodeURIComponent(finalChoice.name+' ('+finalChoice.year+') streaming')}`;
+            resultDiv.innerHTML=`<em>${finalChoice.name}</em> <small>(${finalChoice.year})</small> <a href="${googleSearch}" target="_blank">🔎 Search on Google</a>`;
+        }
+    }, flashInterval);
+});
+
+updatePickButtonState();
+</script>
 </body>
 </html>
