@@ -35,12 +35,20 @@ button.disabled { background: #555; cursor: default; }
 label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }
 .collapsible { visibility: hidden; height: 0; margin: 0; overflow: hidden; }
 .collapsible.show { visibility: visible; height: auto; margin: initial; }
-#toggleCheckboxes { background: #333; font-size: 12px; padding: 6px 10px; margin: -37px auto 0; display: block; transition: margin 0.2s ease; }
-#toggleCheckboxes.expanded { margin: 10px auto 0; }
+#toggleCheckboxes { 
+    background: #333; 
+    font-size: 12px; 
+    padding: 6px 10px; 
+    margin: -50px auto 0; 
+    display: block; 
+    transition: margin 0.2s ease; 
+}#toggleCheckboxes.expanded { margin: -10px auto 0; }
 
 .check-all-container { grid-column: 1 / span 3; display: none; justify-content: center; margin-top: 10px; margin-bottom: 5px; gap: 10px; }
 .check-all-container button {
-    width: 75px;
+    min-width: 0;       /* override global min-width */
+    max-width: none;    /* override global max-width */
+    width: 85px;        /* desired fixed width */
     padding: 4px 0;
     font-size: 12px;
     border-radius: 4px;
@@ -48,6 +56,10 @@ label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; wh
     color: white;
     border: none;
     cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 @media (max-width: 450px) { 
     body { padding: 15px; } 
